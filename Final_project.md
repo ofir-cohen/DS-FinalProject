@@ -7343,3 +7343,12 @@ Plotting the confusion matrix:
 
     <matplotlib.figure.Figure at 0x127ff978>
 
+
+# Summary
+
+By the end of this assignment, and after looking at the results, we can see that the generated posts resemble the characteristics of the original page to which they belong.
+Also, The classifier from part 2 (Random forest) got an accuracy score of 75% which is good.
+However, we feel the results could be improved even further.
+The precision of the classifier on the generated posts is not too high. For example, high percent of Barack Obama posts were identified as Donald Trump's. We expected this behavior since both pages belong to the president of the united states and therefore have a lot in common.
+We could also use different architecture for our neural network, or use more posts to learn from, but that would cost in much longer time to train the models.
+Overall, we are satisfied with our Results.
