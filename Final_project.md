@@ -1,4 +1,4 @@
-
+﻿
 # Data science final project - Ofir Cohen and Doron Sionov
 
 ##                     Generating famous pages' Facebook posts
@@ -608,7 +608,7 @@ plt.show()
 ```
 
 
-![png](output_59_0.png)
+![png](/Images/output_59_0.png)
 
 
 As we can see, Random forset has the best results and thus we will use it as our classifier in step 4.
@@ -6534,7 +6534,7 @@ plt.show()
 
 
 
-![png](output_115_1.png)
+![png](/Images/output_115_1.png)
 
 
 
