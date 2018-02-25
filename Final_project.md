@@ -10,19 +10,15 @@ We will use the facebook sdk to perform facebook grpah api calls.
 The following facebook api code is commented out to save time in future runs. the post will be loaded from a file we have created.
 
 
-```python
-#!pip install facebook-sdk
-```
+    #!pip install facebook-sdk
 
 Obtaining graph instance: 
 
 
-```python
-#import facebook
-#import requests
-
-#graph = facebook.GraphAPI(access_token="ommited for privacy concerns")
-```
+    #import facebook
+    #import requests
+    
+    #graph = facebook.GraphAPI(access_token="ommited for privacy concerns")
 
 ### Collecting posts
 
@@ -31,23 +27,21 @@ We define a generic function to iterate over facebook graph api pages to retriev
 Note - if we want different pages, we can easily replace pages by giving a different url to the getAllPosts function call
 
 
-```python
-def getAllPosts(pageURL):
-    FirstPosts = graph.get_object(id=pageURL, fields="posts",limit = "100")['posts']
-    allPosts = []
-    while(True):
-        try:
-            for post in FirstPosts['data']:
-                if(len(allPosts)<150):
-                    if('message' in post):
-                        allPosts.append(post['message'])
-                    FirstPosts=requests.get(FirstPosts['paging']['next']).json()
-                else:
-                    return(allPosts)
-        except KeyError:
-            break
-    return(allPosts)
-```
+    def getAllPosts(pageURL):
+        FirstPosts = graph.get_object(id=pageURL, fields="posts",limit = "100")['posts']
+        allPosts = []
+        while(True):
+            try:
+                for post in FirstPosts['data']:
+                    if(len(allPosts)<150):
+                        if('message' in post):
+                            allPosts.append(post['message'])
+                        FirstPosts=requests.get(FirstPosts['paging']['next']).json()
+                    else:
+                        return(allPosts)
+            except KeyError:
+                break
+        return(allPosts)
 
 We chose these 5 pages:
 Donald Trump,
@@ -58,50 +52,42 @@ and
 Fox news.
 
 
-```python
-#TrumpPosts = getAllPosts("https://www.facebook.com/DonaldTrump/")
-#ObamaPosts = getAllPosts("https://www.facebook.com/barackobama/")
-#HONYPosts = getAllPosts("https://www.facebook.com/humansofnewyork/")
-#HarvardPosts = getAllPosts("https://www.facebook.com/Harvard/")
-#FoxPosts = getAllPosts("https://www.facebook.com/FoxNews/")
-```
+    #TrumpPosts = getAllPosts("https://www.facebook.com/DonaldTrump/")
+    #ObamaPosts = getAllPosts("https://www.facebook.com/barackobama/")
+    #HONYPosts = getAllPosts("https://www.facebook.com/humansofnewyork/")
+    #HarvardPosts = getAllPosts("https://www.facebook.com/Harvard/")
+    #FoxPosts = getAllPosts("https://www.facebook.com/FoxNews/")
 
 Here we write the posts to two files, one that is human friendly and easy to read:
 
 
-```python
-#collectedPostsFile = open('collectedPosts-Readable.txt', 'w',encoding = 'utf-8')
-#for i,page in enumerate(allposts):
-#    collectedPostsFile.write("\n The " + pagesNames[i] + " page posts are:"+  "\n" + "\n")
-#    for post in page:
-#        collectedPostsFile.write("%s\n" % post)
-#collectedPostsFile.close()
-```
+    #collectedPostsFile = open('collectedPosts-Readable.txt', 'w',encoding = 'utf-8')
+    #for i,page in enumerate(allposts):
+    #    collectedPostsFile.write("\n The " + pagesNames[i] + " page posts are:"+  "\n" + "\n")
+    #    for post in page:
+    #        collectedPostsFile.write("%s\n" % post)
+    #collectedPostsFile.close()
 
 And one that is used as input for the rest of the code:
 
 
-```python
-#collectedPostsFile = open('collectedPosts-AsInput.txt', 'w',encoding = 'utf-8')
-#collectedPostsFile.write(str(allposts))
-#collectedPostsFile.close()
-```
+    #collectedPostsFile = open('collectedPosts-AsInput.txt', 'w',encoding = 'utf-8')
+    #collectedPostsFile.write(str(allposts))
+    #collectedPostsFile.close()
 
 Reading posts from the input file:
 
 
-```python
-import ast
-collectedPostsFile = open('collectedPosts-AsInput.txt', 'r',encoding = 'utf-8')
-allposts = collectedPostsFile.read()
-allposts = ast.literal_eval(allposts)
-collectedPostsFile.close()
-TrumpPosts = allposts[0]
-ObamaPosts = allposts[1]
-HONYPosts = allposts[2]
-HarvardPosts = allposts[3]
-FoxPosts = allposts[4]
-```
+    import ast
+    collectedPostsFile = open('collectedPosts-AsInput.txt', 'r',encoding = 'utf-8')
+    allposts = collectedPostsFile.read()
+    allposts = ast.literal_eval(allposts)
+    collectedPostsFile.close()
+    TrumpPosts = allposts[0]
+    ObamaPosts = allposts[1]
+    HONYPosts = allposts[2]
+    HarvardPosts = allposts[3]
+    FoxPosts = allposts[4]
 
 ### Describing the data
 
@@ -110,18 +96,16 @@ So, it is often not possible to collect large amount of textual posts from a pag
 Therefore we would start by looking at the amount of posts we collected, and look at 5 from each page.
 
 
-```python
-allposts = [TrumpPosts,ObamaPosts,HONYPosts,HarvardPosts,FoxPosts]
-pagesNames = ["Donald Trump","Barack Obama","Humans of New York","Harvard University","Fox news"]
-index = 0
-for page in allposts:
-    print("In the page of ",pagesNames[index], " we collected ",len(page), " posts\n")
-    print("The latest 5 posts in this page are: \n",)
-    for post in page[0:5]:
-        print(post,"\n")
-    print("\n")
-    index = index + 1
-```
+    allposts = [TrumpPosts,ObamaPosts,HONYPosts,HarvardPosts,FoxPosts]
+    pagesNames = ["Donald Trump","Barack Obama","Humans of New York","Harvard University","Fox news"]
+    index = 0
+    for page in allposts:
+        print("In the page of ",pagesNames[index], " we collected ",len(page), " posts\n")
+        print("The latest 5 posts in this page are: \n",)
+        for post in page[0:5]:
+            print(post,"\n")
+        print("\n")
+        index = index + 1
 
     In the page of  Donald Trump  we collected  121  posts
     
@@ -279,30 +263,28 @@ for page in allposts:
     
     
     
-
+    
 
 Lets look at minumun,maximun and average length of the posts.
 
 
-```python
-minLength = len(TrumpPosts[0])
-maxLength = 0
-avg = 0
-count = 0
-sumLength = 0
-for page in allposts:
-    for post in page:
-        count = count + 1
-        sumLength = sumLength + len(post)
-        if(len(post) < minLength):
-            minLength = len(post)
-        if(len(post)>maxLength):
-            maxLength = len(post)
-avg = sumLength/count
-print("The longest post is ", maxLength," characters long\n")
-print("The shortest post is ", minLength," characters long\n")
-print("The avergae length of the posts is ", avg," characters long\n")
-```
+    minLength = len(TrumpPosts[0])
+    maxLength = 0
+    avg = 0
+    count = 0
+    sumLength = 0
+    for page in allposts:
+        for post in page:
+            count = count + 1
+            sumLength = sumLength + len(post)
+            if(len(post) < minLength):
+                minLength = len(post)
+            if(len(post)>maxLength):
+                maxLength = len(post)
+    avg = sumLength/count
+    print("The longest post is ", maxLength," characters long\n")
+    print("The shortest post is ", minLength," characters long\n")
+    print("The avergae length of the posts is ", avg," characters long\n")
 
     The longest post is  5599  characters long
     
@@ -310,7 +292,7 @@ print("The avergae length of the posts is ", avg," characters long\n")
     
     The avergae length of the posts is  249.08944281524927  characters long
     
-
+    
 
 ## Step 2 - Creating a classifier for the different pages
 
@@ -320,25 +302,21 @@ We start by cleaning the posts' text.
 First, we remove non english letters since we are collecting posts from offical facebook pages, and therefore punctuation such as ":)" is not likely to be found.
 
 
-```python
-import re
-onlyEnglish=[]
-for page in allposts:
-    englishPagePost=[]
-    for post in page:
-        englishPost = re.sub("[^a-zA-Z]", " ",post)
-        englishPagePost.append(englishPost)
-    onlyEnglish.append(englishPagePost)
-```
+    import re
+    onlyEnglish=[]
+    for page in allposts:
+        englishPagePost=[]
+        for post in page:
+            englishPost = re.sub("[^a-zA-Z]", " ",post)
+            englishPagePost.append(englishPost)
+        onlyEnglish.append(englishPagePost)
 
 Lets look at the first post of every page after this stage:
 
 
-```python
-for page in onlyEnglish:
-    print(page[0])
-    print("\n")
-```
+    for page in onlyEnglish:
+        print(page[0])
+        print("\n")
 
     Today  it was my great honor to host a School Safety Roundtable at the White House with State and local leaders  law enforcement officers  and education officials   There is nothing more important than protecting our children  They deserve to be safe  and we will deliver 
     
@@ -355,29 +333,25 @@ for page in onlyEnglish:
     Eric Trump and Charlie Kirk speak at CPAC      
     
     
-
+    
 
 We continue to clean the data by converting the posts to lower case, and split each post to words.
 
 
-```python
-lowerCaseWords=[]
-for page in onlyEnglish:
-    pagePostsWords=[]
-    for post in page:
-        words = post.lower().split()                 
-        pagePostsWords.append(words)
-    lowerCaseWords.append(pagePostsWords)
-```
+    lowerCaseWords=[]
+    for page in onlyEnglish:
+        pagePostsWords=[]
+        for post in page:
+            words = post.lower().split()                 
+            pagePostsWords.append(words)
+        lowerCaseWords.append(pagePostsWords)
 
 Lets look at the first post of every page after this stage:
 
 
-```python
-for page in lowerCaseWords:
-    print(page[0])
-    print("\n")
-```
+    for page in lowerCaseWords:
+        print(page[0])
+        print("\n")
 
     ['today', 'it', 'was', 'my', 'great', 'honor', 'to', 'host', 'a', 'school', 'safety', 'roundtable', 'at', 'the', 'white', 'house', 'with', 'state', 'and', 'local', 'leaders', 'law', 'enforcement', 'officers', 'and', 'education', 'officials', 'there', 'is', 'nothing', 'more', 'important', 'than', 'protecting', 'our', 'children', 'they', 'deserve', 'to', 'be', 'safe', 'and', 'we', 'will', 'deliver']
     
@@ -394,36 +368,30 @@ for page in lowerCaseWords:
     ['eric', 'trump', 'and', 'charlie', 'kirk', 'speak', 'at', 'cpac']
     
     
-
+    
 
 Now, we will remove stop words from our posts.
 
 
-```python
-import nltk
-#nltk.download()
-```
+    import nltk
+    #nltk.download()
 
 
-```python
-from nltk.corpus import stopwords
-noStopWords=[]
-for page in lowerCaseWords:
-    pagePostsWithoutStopWords=[]
-    for post in page:
-        words = [w for w in post if not w in stopwords.words("english")]                 
-        pagePostsWithoutStopWords.append(words)
-    noStopWords.append(pagePostsWithoutStopWords)
-```
+    from nltk.corpus import stopwords
+    noStopWords=[]
+    for page in lowerCaseWords:
+        pagePostsWithoutStopWords=[]
+        for post in page:
+            words = [w for w in post if not w in stopwords.words("english")]                 
+            pagePostsWithoutStopWords.append(words)
+        noStopWords.append(pagePostsWithoutStopWords)
 
 lets look at the first post of every page after this stage:
 
 
-```python
-for page in noStopWords:
-    print(page[0])
-    print("\n")
-```
+    for page in noStopWords:
+        print(page[0])
+        print("\n")
 
     ['today', 'great', 'honor', 'host', 'school', 'safety', 'roundtable', 'white', 'house', 'state', 'local', 'leaders', 'law', 'enforcement', 'officers', 'education', 'officials', 'nothing', 'important', 'protecting', 'children', 'deserve', 'safe', 'deliver']
     
@@ -440,29 +408,25 @@ for page in noStopWords:
     ['eric', 'trump', 'charlie', 'kirk', 'speak', 'cpac']
     
     
-
+    
 
 Finally, we join the word list back into a sentence
 
 
-```python
-cleanedPosts=[]
-for page in noStopWords:
-    pageCleanedPosts=[]
-    for post in page:
-        cleaned = " ".join(post)                 
-        pageCleanedPosts.append(cleaned)
-    cleanedPosts.append(pageCleanedPosts)
-```
+    cleanedPosts=[]
+    for page in noStopWords:
+        pageCleanedPosts=[]
+        for post in page:
+            cleaned = " ".join(post)                 
+            pageCleanedPosts.append(cleaned)
+        cleanedPosts.append(pageCleanedPosts)
 
 Lets see our fully cleaned posts, the first from each page:
 
 
-```python
-for page in cleanedPosts:
-    print(page[0])
-    print("\n")
-```
+    for page in cleanedPosts:
+        print(page[0])
+        print("\n")
 
     today great honor host school safety roundtable white house state local leaders law enforcement officers education officials nothing important protecting children deserve safe deliver
     
@@ -479,7 +443,7 @@ for page in cleanedPosts:
     eric trump charlie kirk speak cpac
     
     
-
+    
 
 ### Moving to Structured Data - Bag of words
 
@@ -487,62 +451,56 @@ Now that we have all data in a clean format, we can represent it as a bag of wor
 We chose max features to be 400 after we tried different numbers and noticed the results.
 
 
-```python
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer(analyzer = "word",tokenizer = None,preprocessor = None,stop_words = None, max_features = 400)
-labelsForPosts=[]
-index = 0
-for page in cleanedPosts:
-    for post in page:
-        labelsForPosts.append(index)
-    index= index+1
-allCleanedPosts = cleanedPosts[0]+cleanedPosts[1]+cleanedPosts[2]+cleanedPosts[3]+cleanedPosts[4]
-train_data_features = vectorizer.fit_transform(allCleanedPosts)
-train_data_features = train_data_features.toarray()
-```
+    from sklearn.feature_extraction.text import CountVectorizer
+    vectorizer = CountVectorizer(analyzer = "word",tokenizer = None,preprocessor = None,stop_words = None, max_features = 400)
+    labelsForPosts=[]
+    index = 0
+    for page in cleanedPosts:
+        for post in page:
+            labelsForPosts.append(index)
+        index= index+1
+    allCleanedPosts = cleanedPosts[0]+cleanedPosts[1]+cleanedPosts[2]+cleanedPosts[3]+cleanedPosts[4]
+    train_data_features = vectorizer.fit_transform(allCleanedPosts)
+    train_data_features = train_data_features.toarray()
 
 ### Building the classifier
 
 First we split the data into train and test sets. Then, we will try three different classifiers and select the best one.
 
 
-```python
-import numpy
-msk = numpy.random.rand(len(allCleanedPosts)) < 0.8
-index = 0
-train_x = []
-train_y = []
-test_x = []
-test_y = []
-
-for post in train_data_features:
-    if(msk[index]):
-        train_x.append(train_data_features[index])
-        train_y.append(labelsForPosts[index])   
-    else:
-        test_x.append(train_data_features[index])
-        test_y.append(labelsForPosts[index])   
-    index = index + 1
-```
+    import numpy
+    msk = numpy.random.rand(len(allCleanedPosts)) < 0.8
+    index = 0
+    train_x = []
+    train_y = []
+    test_x = []
+    test_y = []
+    
+    for post in train_data_features:
+        if(msk[index]):
+            train_x.append(train_data_features[index])
+            train_y.append(labelsForPosts[index])   
+        else:
+            test_x.append(train_data_features[index])
+            test_y.append(labelsForPosts[index])   
+        index = index + 1
 
 ###Random Forest
 
 Training Random Forest model:
 
 
-```python
-from sklearn.ensemble import RandomForestClassifier
-
-forest = RandomForestClassifier(n_estimators = 90) 
-forest = forest.fit(numpy.vstack(train_x), numpy.ravel(numpy.vstack(train_y )))
-ForestScore = forest.score(numpy.vstack(test_x),numpy.ravel(numpy.vstack(test_y)))
-ForestScore
-```
+    from sklearn.ensemble import RandomForestClassifier
+    
+    forest = RandomForestClassifier(n_estimators = 90) 
+    forest = forest.fit(numpy.vstack(train_x), numpy.ravel(numpy.vstack(train_y )))
+    ForestScore = forest.score(numpy.vstack(test_x),numpy.ravel(numpy.vstack(test_y)))
+    ForestScore
 
 
 
 
-    0.75177304964539005
+    0.72661870503597126
 
 
 
@@ -551,18 +509,16 @@ ForestScore
 Training SVM model:
 
 
-```python
-from sklearn import svm
-SvmModel = svm.SVC()
-SvmModel.fit(train_x, train_y)
-SVMScore = SvmModel.score(numpy.vstack(test_x), numpy.vstack(test_y))
-SVMScore
-```
+    from sklearn import svm
+    SvmModel = svm.SVC()
+    SvmModel.fit(train_x, train_y)
+    SVMScore = SvmModel.score(numpy.vstack(test_x), numpy.vstack(test_y))
+    SVMScore
 
 
 
 
-    0.42553191489361702
+    0.30935251798561153
 
 
 
@@ -571,41 +527,37 @@ SVMScore
 Training KNN model:
 
 
-```python
-from sklearn.neighbors import KNeighborsClassifier
-KNNModel = KNeighborsClassifier(n_neighbors=10)
-KNNModel.fit(train_x, train_y)
-KNNScore = KNNModel.score(numpy.vstack(test_x), numpy.vstack(test_y))
-KNNScore
-```
+    from sklearn.neighbors import KNeighborsClassifier
+    KNNModel = KNeighborsClassifier(n_neighbors=10)
+    KNNModel.fit(train_x, train_y)
+    KNNScore = KNNModel.score(numpy.vstack(test_x), numpy.vstack(test_y))
+    KNNScore
 
 
 
 
-    0.57446808510638303
+    0.57553956834532372
 
 
 
 Lets Comapre the results and decide on our finale classifier:
 
 
-```python
-import matplotlib.pyplot as plt;
-%matplotlib inline
-import numpy as np
-import matplotlib.pyplot as plt
- 
-objects = ('KNN', 'SVM', 'RandomForest')
-y_pos = np.arange(len(objects))
-performance = [KNNScore,SVMScore,ForestScore]
- 
-plt.bar(y_pos, performance, align='center', alpha=0.5)
-plt.xticks(y_pos, objects)
-plt.ylabel('Percision(%)')
-plt.title('Algorithm')
- 
-plt.show()
-```
+    import matplotlib.pyplot as plt;
+    %matplotlib inline
+    import numpy as np
+    import matplotlib.pyplot as plt
+     
+    objects = ('KNN', 'SVM', 'RandomForest')
+    y_pos = np.arange(len(objects))
+    performance = [KNNScore,SVMScore,ForestScore]
+     
+    plt.bar(y_pos, performance, align='center', alpha=0.5)
+    plt.xticks(y_pos, objects)
+    plt.ylabel('Percision(%)')
+    plt.title('Algorithm')
+     
+    plt.show()
 
 
 ![png](/Images/output_59_0.png)
@@ -616,54 +568,48 @@ As we can see, Random forset has the best results and thus we will use it as our
 ## Step 3 - Generating posts
 
 
-```python
-#!pip install keras==1.2
-#!pip install theano
-#from keras import backend as K
-#K.set_image_dim_ordering('th')
-import keras
-print(keras.__version__)
-import theano
-```
+    #!pip install keras==1.2
+    #!pip install theano
+    #from keras import backend as K
+    #K.set_image_dim_ordering('th')
+    import keras
+    print(keras.__version__)
+    import theano
 
     1.2.0
-
+    
 
 We define the following tokens and a vocabulary of size 600, to get only most common words:
 
 
-```python
-vocabulary_size = 600
-next_post_toekn = "NEXTPOST"
-unknown_token = "UNKNOWNTOKEN"
-sentence_start_token = "SENTENCESTART"
-sentence_end_token = "SENTENCEEND"
-line_break= "NEWLINE"
-separator= "SEPARATOR"
-```
+    vocabulary_size = 600
+    next_post_toekn = "NEXTPOST"
+    unknown_token = "UNKNOWNTOKEN"
+    sentence_start_token = "SENTENCESTART"
+    sentence_end_token = "SENTENCEEND"
+    line_break= "NEWLINE"
+    separator= "SEPARATOR"
 
 Next, we insert the above tokens into all of the posts: 
 
 
-```python
-trumpPostsCombined = ''
-obamaPostsCombined = ''
-honyPostsCombined = ''
-harvardPostsCombined = ''
-foxPostsCombined = ''
-allpostsCombined = [trumpPostsCombined,obamaPostsCombined,honyPostsCombined,harvardPostsCombined,foxPostsCombined]
-index = 0
-for page in allposts:
-    for post in page:
-        post_with_tokens = next_post_toekn + ' ' + sentence_start_token + " " + post
-        post_with_tokens = post_with_tokens.replace('\n',' '+ line_break + ' ')
-        post_with_tokens = post_with_tokens.replace('--',' '+ separator + ' ')
-        post_with_tokens = post_with_tokens.replace('.',' '+sentence_end_token +' '+ sentence_start_token+' ' )
-        allpostsCombined[index] = allpostsCombined[index] + ' ' + post_with_tokens
-    allpostsCombined[index] = allpostsCombined[index][1:]
-    index +=1
-allpostsCombined
-```
+    trumpPostsCombined = ''
+    obamaPostsCombined = ''
+    honyPostsCombined = ''
+    harvardPostsCombined = ''
+    foxPostsCombined = ''
+    allpostsCombined = [trumpPostsCombined,obamaPostsCombined,honyPostsCombined,harvardPostsCombined,foxPostsCombined]
+    index = 0
+    for page in allposts:
+        for post in page:
+            post_with_tokens = next_post_toekn + ' ' + sentence_start_token + " " + post
+            post_with_tokens = post_with_tokens.replace('\n',' '+ line_break + ' ')
+            post_with_tokens = post_with_tokens.replace('--',' '+ separator + ' ')
+            post_with_tokens = post_with_tokens.replace('.',' '+sentence_end_token +' '+ sentence_start_token+' ' )
+            allpostsCombined[index] = allpostsCombined[index] + ' ' + post_with_tokens
+        allpostsCombined[index] = allpostsCombined[index][1:]
+        index +=1
+    allpostsCombined
 
 
 
@@ -679,13 +625,11 @@ allpostsCombined
 After tokenning our posts, we split them to words:
 
 
-```python
-from keras.preprocessing.text import text_to_word_sequence
-allpostsAsSequence= []
-for post in allpostsCombined:
-    allpostsAsSequence.append(text_to_word_sequence(post, lower=False, split=" "))
-allpostsAsSequence
-```
+    from keras.preprocessing.text import text_to_word_sequence
+    allpostsAsSequence= []
+    for post in allpostsCombined:
+        allpostsAsSequence.append(text_to_word_sequence(post, lower=False, split=" "))
+    allpostsAsSequence
 
 
 
@@ -5701,37 +5645,31 @@ allpostsAsSequence
 We than create the tokens and matrixes for each post:
 
 
-```python
-from keras.preprocessing.text import Tokenizer
-tokens = []
-text_mtxs = []
-for seq in allpostsAsSequence:
-    token = Tokenizer(nb_words=vocabulary_size,char_level=False)
-    token.fit_on_texts(seq)
-    text_mtx = token.texts_to_matrix(seq, mode='binary')
-    tokens.append(token)
-    text_mtxs.append(text_mtx)
-```
+    from keras.preprocessing.text import Tokenizer
+    tokens = []
+    text_mtxs = []
+    for seq in allpostsAsSequence:
+        token = Tokenizer(nb_words=vocabulary_size,char_level=False)
+        token.fit_on_texts(seq)
+        text_mtx = token.texts_to_matrix(seq, mode='binary')
+        tokens.append(token)
+        text_mtxs.append(text_mtx)
 
 And creating the vocabulary of each page:
 
 
-```python
-import pandas as pd
-import numpy as np
-index = 0
-vocabs = []
-for seq in allpostsAsSequence:
-    vocab = pd.DataFrame({'word':seq,'code':np.argmax(text_mtxs[index],axis=1)})
-    vocab=vocab.drop_duplicates()
-    vocabs.append(vocab)
-    index += 1
-```
+    import pandas as pd
+    import numpy as np
+    index = 0
+    vocabs = []
+    for seq in allpostsAsSequence:
+        vocab = pd.DataFrame({'word':seq,'code':np.argmax(text_mtxs[index],axis=1)})
+        vocab=vocab.drop_duplicates()
+        vocabs.append(vocab)
+        index += 1
 
 
-```python
-vocabs
-```
+    vocabs
 
 
 
@@ -6058,105 +5996,994 @@ vocabs
 Creating inputs and outputs for each page's network:
 
 
-```python
-inputs = []
-outputs = []
-for text_mat in text_mtxs:
-    inputs.append(text_mat[:-1])
-    outputs.append(text_mat[1:])
-```
+    inputs = []
+    outputs = []
+    for text_mat in text_mtxs:
+        inputs.append(text_mat[:-1])
+        outputs.append(text_mat[1:])
 
 
-```python
-from keras.models import Sequential
-from keras.layers.core import Dense, Activation, Flatten
-from keras.layers.embeddings import Embedding
-```
+    from keras.models import Sequential
+    from keras.layers.core import Dense, Activation, Flatten
+    from keras.layers.embeddings import Embedding
 
 Assembling a model for each page:
 
 
-```python
-models = []
-index = 0
-for input_ in inputs:
-    model = Sequential()
-    model.add(Embedding(input_dim=input_.shape[1],output_dim= 42, input_length=input_.shape[1]))
-    model.add(Flatten())
-    model.add(Dense(outputs[index].shape[1], activation='sigmoid'))
-    index += 1
-    models.append(model)
-```
+    models = []
+    index = 0
+    for input_ in inputs:
+        model = Sequential()
+        model.add(Embedding(input_dim=input_.shape[1],output_dim= 42, input_length=input_.shape[1]))
+        model.add(Flatten())
+        model.add(Dense(outputs[index].shape[1], activation='sigmoid'))
+        index += 1
+        models.append(model)
 
 Compiling all the models:
 
 
-```python
-for model in models:
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop',metrics=["accuracy"])
-```
+    for model in models:
+        model.compile(loss='categorical_crossentropy', optimizer='rmsprop',metrics=["accuracy"])
 
 The model training is commented out to save time in future runs. We will load the models' weights from backup files.
 
 Training the models:(we tried many options for the parameters and found these to be optimal)
 
 
-```python
-#index = 0
-#for model in models:
-#    if(index == 2):
-#        model.fit(inputs[index], y=outputs[index], batch_size=200, nb_epoch=50, verbose=1, validation_split=0.2)
-#    else:
-#        model.fit(inputs[index], y=outputs[index], batch_size=200, nb_epoch=100, verbose=1, validation_split=0.2)
-#    index +=1
-```
+    index = 0
+    for model in models:
+        if(index == 2):
+            model.fit(inputs[index], y=outputs[index], batch_size=200, nb_epoch=50, verbose=1, validation_split=0.2)
+        else:
+            model.fit(inputs[index], y=outputs[index], batch_size=200, nb_epoch=100, verbose=1, validation_split=0.2)
+        index +=1
+
+    Train on 3299 samples, validate on 825 samples
+    Epoch 1/100
+    3299/3299 [==============================] - 7s - loss: 4.9926 - acc: 0.0209 - val_loss: 4.8163 - val_acc: 0.1285
+    Epoch 2/100
+    3299/3299 [==============================] - 7s - loss: 4.6610 - acc: 0.0740 - val_loss: 4.8188 - val_acc: 0.1164
+    Epoch 3/100
+    3299/3299 [==============================] - 7s - loss: 4.6067 - acc: 0.0700 - val_loss: 4.8832 - val_acc: 0.1164
+    Epoch 4/100
+    3299/3299 [==============================] - 7s - loss: 4.5678 - acc: 0.0700 - val_loss: 4.9940 - val_acc: 0.1164
+    Epoch 5/100
+    3299/3299 [==============================] - 7s - loss: 4.5333 - acc: 0.0700 - val_loss: 5.0360 - val_acc: 0.1164
+    Epoch 6/100
+    3299/3299 [==============================] - 7s - loss: 4.4906 - acc: 0.0700 - val_loss: 5.0286 - val_acc: 0.1200
+    Epoch 7/100
+    3299/3299 [==============================] - 7s - loss: 4.4436 - acc: 0.0703 - val_loss: 5.0721 - val_acc: 0.1164
+    Epoch 8/100
+    3299/3299 [==============================] - 7s - loss: 4.3902 - acc: 0.0797 - val_loss: 5.1130 - val_acc: 0.1830
+    Epoch 9/100
+    3299/3299 [==============================] - 7s - loss: 4.3326 - acc: 0.1070 - val_loss: 5.3055 - val_acc: 0.1782
+    Epoch 10/100
+    3299/3299 [==============================] - 7s - loss: 4.2321 - acc: 0.1373 - val_loss: 5.2103 - val_acc: 0.1915
+    Epoch 11/100
+    3299/3299 [==============================] - 7s - loss: 4.1256 - acc: 0.1488 - val_loss: 5.2006 - val_acc: 0.1491
+    Epoch 12/100
+    3299/3299 [==============================] - 7s - loss: 4.0349 - acc: 0.1570 - val_loss: 5.1365 - val_acc: 0.1915
+    Epoch 13/100
+    3299/3299 [==============================] - 7s - loss: 3.9347 - acc: 0.1658 - val_loss: 5.1415 - val_acc: 0.1552
+    Epoch 14/100
+    3299/3299 [==============================] - 7s - loss: 3.8385 - acc: 0.1828 - val_loss: 5.0603 - val_acc: 0.1903
+    Epoch 15/100
+    3299/3299 [==============================] - 7s - loss: 3.7458 - acc: 0.1928 - val_loss: 5.0323 - val_acc: 0.1939
+    Epoch 16/100
+    3299/3299 [==============================] - 7s - loss: 3.6494 - acc: 0.1976 - val_loss: 4.9812 - val_acc: 0.1964
+    Epoch 17/100
+    3299/3299 [==============================] - 7s - loss: 3.5612 - acc: 0.1998 - val_loss: 4.9509 - val_acc: 0.1915
+    Epoch 18/100
+    3299/3299 [==============================] - 7s - loss: 3.4681 - acc: 0.2110 - val_loss: 4.9518 - val_acc: 0.1891
+    Epoch 19/100
+    3299/3299 [==============================] - 7s - loss: 3.3781 - acc: 0.2158 - val_loss: 4.9879 - val_acc: 0.1988
+    Epoch 20/100
+    3299/3299 [==============================] - 7s - loss: 3.2968 - acc: 0.2283 - val_loss: 5.0076 - val_acc: 0.1697
+    Epoch 21/100
+    3299/3299 [==============================] - 7s - loss: 3.2118 - acc: 0.2380 - val_loss: 4.9573 - val_acc: 0.2036
+    Epoch 22/100
+    3299/3299 [==============================] - 7s - loss: 3.1232 - acc: 0.2413 - val_loss: 4.9530 - val_acc: 0.2085
+    Epoch 23/100
+    3299/3299 [==============================] - 7s - loss: 3.0458 - acc: 0.2510 - val_loss: 4.7987 - val_acc: 0.1770
+    Epoch 24/100
+    3299/3299 [==============================] - 7s - loss: 2.9738 - acc: 0.2625 - val_loss: 4.8748 - val_acc: 0.2085
+    Epoch 25/100
+    3299/3299 [==============================] - 7s - loss: 2.8899 - acc: 0.2637 - val_loss: 4.9179 - val_acc: 0.2097
+    Epoch 26/100
+    3299/3299 [==============================] - 7s - loss: 2.8200 - acc: 0.2698 - val_loss: 4.9429 - val_acc: 0.2024
+    Epoch 27/100
+    3299/3299 [==============================] - 7s - loss: 2.7458 - acc: 0.2752 - val_loss: 4.9303 - val_acc: 0.2097
+    Epoch 28/100
+    3299/3299 [==============================] - 7s - loss: 2.6873 - acc: 0.2822 - val_loss: 4.9006 - val_acc: 0.2024
+    Epoch 29/100
+    3299/3299 [==============================] - 7s - loss: 2.6221 - acc: 0.2898 - val_loss: 4.9113 - val_acc: 0.2036
+    Epoch 30/100
+    3299/3299 [==============================] - 7s - loss: 2.5540 - acc: 0.2965 - val_loss: 5.0262 - val_acc: 0.2109
+    Epoch 31/100
+    3299/3299 [==============================] - 7s - loss: 2.4973 - acc: 0.3037 - val_loss: 5.0235 - val_acc: 0.2048
+    Epoch 32/100
+    3299/3299 [==============================] - 7s - loss: 2.4351 - acc: 0.3092 - val_loss: 5.0702 - val_acc: 0.2097
+    Epoch 33/100
+    3299/3299 [==============================] - 7s - loss: 2.3940 - acc: 0.3156 - val_loss: 5.0280 - val_acc: 0.2133
+    Epoch 34/100
+    3299/3299 [==============================] - 7s - loss: 2.3353 - acc: 0.3171 - val_loss: 4.9384 - val_acc: 0.2048
+    Epoch 35/100
+    3299/3299 [==============================] - 7s - loss: 2.2922 - acc: 0.3219 - val_loss: 5.0836 - val_acc: 0.2109
+    Epoch 36/100
+    3299/3299 [==============================] - 7s - loss: 2.2416 - acc: 0.3268 - val_loss: 4.9685 - val_acc: 0.2061
+    Epoch 37/100
+    3299/3299 [==============================] - 7s - loss: 2.2043 - acc: 0.3256 - val_loss: 5.1223 - val_acc: 0.2024
+    Epoch 38/100
+    3299/3299 [==============================] - 7s - loss: 2.1622 - acc: 0.3307 - val_loss: 5.0787 - val_acc: 0.2024
+    Epoch 39/100
+    3299/3299 [==============================] - 7s - loss: 2.1288 - acc: 0.3322 - val_loss: 5.0926 - val_acc: 0.2036
+    Epoch 40/100
+    3299/3299 [==============================] - 7s - loss: 2.0920 - acc: 0.3328 - val_loss: 5.2005 - val_acc: 0.2109
+    Epoch 41/100
+    3299/3299 [==============================] - 7s - loss: 2.0611 - acc: 0.3419 - val_loss: 5.1808 - val_acc: 0.2061
+    Epoch 42/100
+    3299/3299 [==============================] - 7s - loss: 2.0334 - acc: 0.3425 - val_loss: 5.1994 - val_acc: 0.2036
+    Epoch 43/100
+    3299/3299 [==============================] - 7s - loss: 2.0019 - acc: 0.3407 - val_loss: 5.3119 - val_acc: 0.2048
+    Epoch 44/100
+    3299/3299 [==============================] - 7s - loss: 1.9897 - acc: 0.3407 - val_loss: 5.3208 - val_acc: 0.2109
+    Epoch 45/100
+    3299/3299 [==============================] - 7s - loss: 1.9647 - acc: 0.3392 - val_loss: 5.2665 - val_acc: 0.2133
+    Epoch 46/100
+    3299/3299 [==============================] - 7s - loss: 1.9385 - acc: 0.3413 - val_loss: 5.3806 - val_acc: 0.2073
+    Epoch 47/100
+    3299/3299 [==============================] - 7s - loss: 1.9255 - acc: 0.3440 - val_loss: 5.2982 - val_acc: 0.2012
+    Epoch 48/100
+    3299/3299 [==============================] - 7s - loss: 1.9035 - acc: 0.3365 - val_loss: 5.4399 - val_acc: 0.2145
+    Epoch 49/100
+    3299/3299 [==============================] - 7s - loss: 1.8967 - acc: 0.3377 - val_loss: 5.3606 - val_acc: 0.1988
+    Epoch 50/100
+    3299/3299 [==============================] - 7s - loss: 1.8839 - acc: 0.3365 - val_loss: 5.5037 - val_acc: 0.2121
+    Epoch 51/100
+    3299/3299 [==============================] - 7s - loss: 1.8697 - acc: 0.3362 - val_loss: 5.5007 - val_acc: 0.2109
+    Epoch 52/100
+    3299/3299 [==============================] - 7s - loss: 1.8597 - acc: 0.3334 - val_loss: 5.5526 - val_acc: 0.2097
+    Epoch 53/100
+    3299/3299 [==============================] - 7s - loss: 1.8551 - acc: 0.3346 - val_loss: 5.5519 - val_acc: 0.2121
+    Epoch 54/100
+    3299/3299 [==============================] - 7s - loss: 1.8506 - acc: 0.3316 - val_loss: 5.5699 - val_acc: 0.2133
+    Epoch 55/100
+    3299/3299 [==============================] - 7s - loss: 1.8437 - acc: 0.3307 - val_loss: 5.5883 - val_acc: 0.2097
+    Epoch 56/100
+    3299/3299 [==============================] - 7s - loss: 1.8329 - acc: 0.3298 - val_loss: 5.4939 - val_acc: 0.2036
+    Epoch 57/100
+    3299/3299 [==============================] - 7s - loss: 1.8313 - acc: 0.3349 - val_loss: 5.6499 - val_acc: 0.2036
+    Epoch 58/100
+    3299/3299 [==============================] - 7s - loss: 1.8268 - acc: 0.3295 - val_loss: 5.4915 - val_acc: 0.2012
+    Epoch 59/100
+    3299/3299 [==============================] - 7s - loss: 1.8234 - acc: 0.3295 - val_loss: 5.7636 - val_acc: 0.2085
+    Epoch 60/100
+    3299/3299 [==============================] - 7s - loss: 1.8187 - acc: 0.3298 - val_loss: 5.7561 - val_acc: 0.2109
+    Epoch 61/100
+    3299/3299 [==============================] - 7s - loss: 1.8175 - acc: 0.3319 - val_loss: 5.7180 - val_acc: 0.2097
+    Epoch 62/100
+    3299/3299 [==============================] - 7s - loss: 1.8067 - acc: 0.3313 - val_loss: 5.9141 - val_acc: 0.2145
+    Epoch 63/100
+    3299/3299 [==============================] - 8s - loss: 1.8137 - acc: 0.3316 - val_loss: 5.8558 - val_acc: 0.2121
+    Epoch 64/100
+    3299/3299 [==============================] - 7s - loss: 1.8100 - acc: 0.3319 - val_loss: 5.4978 - val_acc: 0.1988
+    Epoch 65/100
+    3299/3299 [==============================] - 7s - loss: 1.8111 - acc: 0.3295 - val_loss: 5.8187 - val_acc: 0.2121
+    Epoch 66/100
+    3299/3299 [==============================] - 7s - loss: 1.8095 - acc: 0.3298 - val_loss: 5.8387 - val_acc: 0.2097
+    Epoch 67/100
+    3299/3299 [==============================] - 7s - loss: 1.8016 - acc: 0.3298 - val_loss: 5.8201 - val_acc: 0.2097
+    Epoch 68/100
+    3299/3299 [==============================] - 7s - loss: 1.8003 - acc: 0.3325 - val_loss: 5.8265 - val_acc: 0.2133
+    Epoch 69/100
+    3299/3299 [==============================] - 7s - loss: 1.8023 - acc: 0.3295 - val_loss: 5.7311 - val_acc: 0.2000
+    Epoch 70/100
+    3299/3299 [==============================] - 7s - loss: 1.7972 - acc: 0.3340 - val_loss: 5.4863 - val_acc: 0.2085
+    Epoch 71/100
+    3299/3299 [==============================] - 7s - loss: 1.8014 - acc: 0.3334 - val_loss: 5.6955 - val_acc: 0.2000
+    Epoch 72/100
+    3299/3299 [==============================] - 7s - loss: 1.7908 - acc: 0.3301 - val_loss: 5.8889 - val_acc: 0.2158
+    Epoch 73/100
+    3299/3299 [==============================] - 7s - loss: 1.7916 - acc: 0.3328 - val_loss: 5.8768 - val_acc: 0.2133
+    Epoch 74/100
+    3299/3299 [==============================] - 7s - loss: 1.8008 - acc: 0.3301 - val_loss: 6.0044 - val_acc: 0.2109
+    Epoch 75/100
+    3299/3299 [==============================] - 7s - loss: 1.7927 - acc: 0.3310 - val_loss: 5.7313 - val_acc: 0.2073
+    Epoch 76/100
+    3299/3299 [==============================] - 7s - loss: 1.7837 - acc: 0.3374 - val_loss: 5.7795 - val_acc: 0.1976
+    Epoch 77/100
+    3299/3299 [==============================] - 7s - loss: 1.7953 - acc: 0.3334 - val_loss: 5.7565 - val_acc: 0.2073
+    Epoch 78/100
+    3299/3299 [==============================] - 7s - loss: 1.7889 - acc: 0.3325 - val_loss: 5.6904 - val_acc: 0.2085
+    Epoch 79/100
+    3299/3299 [==============================] - 7s - loss: 1.7846 - acc: 0.3371 - val_loss: 5.9425 - val_acc: 0.2145
+    Epoch 80/100
+    3299/3299 [==============================] - 7s - loss: 1.7903 - acc: 0.3310 - val_loss: 5.7401 - val_acc: 0.1952
+    Epoch 81/100
+    3299/3299 [==============================] - 7s - loss: 1.7894 - acc: 0.3319 - val_loss: 5.8597 - val_acc: 0.2012
+    Epoch 82/100
+    3299/3299 [==============================] - 7s - loss: 1.7875 - acc: 0.3328 - val_loss: 6.0017 - val_acc: 0.2024
+    Epoch 83/100
+    3299/3299 [==============================] - 7s - loss: 1.7812 - acc: 0.3310 - val_loss: 5.8492 - val_acc: 0.1988
+    Epoch 84/100
+    3299/3299 [==============================] - 7s - loss: 1.7897 - acc: 0.3313 - val_loss: 5.6943 - val_acc: 0.1988
+    Epoch 85/100
+    3299/3299 [==============================] - 7s - loss: 1.7878 - acc: 0.3295 - val_loss: 6.0683 - val_acc: 0.2097
+    Epoch 86/100
+    3299/3299 [==============================] - 7s - loss: 1.7817 - acc: 0.3289 - val_loss: 5.9033 - val_acc: 0.2024
+    Epoch 87/100
+    3299/3299 [==============================] - 7s - loss: 1.7872 - acc: 0.3346 - val_loss: 6.0656 - val_acc: 0.2073
+    Epoch 88/100
+    3299/3299 [==============================] - 7s - loss: 1.7815 - acc: 0.3331 - val_loss: 6.1051 - val_acc: 0.2085
+    Epoch 89/100
+    3299/3299 [==============================] - 7s - loss: 1.7934 - acc: 0.3331 - val_loss: 5.8579 - val_acc: 0.2073
+    Epoch 90/100
+    3299/3299 [==============================] - 7s - loss: 1.7798 - acc: 0.3337 - val_loss: 6.0135 - val_acc: 0.2109
+    Epoch 91/100
+    3299/3299 [==============================] - 7s - loss: 1.7802 - acc: 0.3319 - val_loss: 5.8505 - val_acc: 0.1976
+    Epoch 92/100
+    3299/3299 [==============================] - 7s - loss: 1.7870 - acc: 0.3301 - val_loss: 5.6533 - val_acc: 0.2109
+    Epoch 93/100
+    3299/3299 [==============================] - 7s - loss: 1.7854 - acc: 0.3289 - val_loss: 6.0483 - val_acc: 0.2109
+    Epoch 94/100
+    3299/3299 [==============================] - 7s - loss: 1.7775 - acc: 0.3298 - val_loss: 6.1745 - val_acc: 0.2073
+    Epoch 95/100
+    3299/3299 [==============================] - 7s - loss: 1.7773 - acc: 0.3283 - val_loss: 6.1824 - val_acc: 0.2000
+    Epoch 96/100
+    3299/3299 [==============================] - 7s - loss: 1.7732 - acc: 0.3343 - val_loss: 5.7044 - val_acc: 0.2000
+    Epoch 97/100
+    3299/3299 [==============================] - 7s - loss: 1.7812 - acc: 0.3319 - val_loss: 6.2425 - val_acc: 0.2061
+    Epoch 98/100
+    3299/3299 [==============================] - 7s - loss: 1.7820 - acc: 0.3322 - val_loss: 5.8958 - val_acc: 0.2109
+    Epoch 99/100
+    3299/3299 [==============================] - 7s - loss: 1.7846 - acc: 0.3307 - val_loss: 6.2506 - val_acc: 0.2121
+    Epoch 100/100
+    3299/3299 [==============================] - 7s - loss: 1.7795 - acc: 0.3359 - val_loss: 6.3412 - val_acc: 0.2073
+    Train on 5416 samples, validate on 1355 samples
+    Epoch 1/100
+    5416/5416 [==============================] - 12s - loss: 4.6667 - acc: 0.0279 - val_loss: 4.8574 - val_acc: 0.0148
+    Epoch 2/100
+    5416/5416 [==============================] - 12s - loss: 4.4217 - acc: 0.0541 - val_loss: 5.0105 - val_acc: 0.0871
+    Epoch 3/100
+    5416/5416 [==============================] - 12s - loss: 4.3678 - acc: 0.0668 - val_loss: 5.0507 - val_acc: 0.0871
+    Epoch 4/100
+    5416/5416 [==============================] - 12s - loss: 4.3106 - acc: 0.0702 - val_loss: 5.1244 - val_acc: 0.1166
+    Epoch 5/100
+    5416/5416 [==============================] - 12s - loss: 4.2476 - acc: 0.0587 - val_loss: 5.1103 - val_acc: 0.0583
+    Epoch 6/100
+    5416/5416 [==============================] - 13s - loss: 4.1578 - acc: 0.0654 - val_loss: 5.4086 - val_acc: 0.0583
+    Epoch 7/100
+    5416/5416 [==============================] - 13s - loss: 4.0210 - acc: 0.1422 - val_loss: 5.0993 - val_acc: 0.1491
+    Epoch 8/100
+    5416/5416 [==============================] - 12s - loss: 3.8804 - acc: 0.1595 - val_loss: 5.0157 - val_acc: 0.1594
+    Epoch 9/100
+    5416/5416 [==============================] - 12s - loss: 3.7551 - acc: 0.1632 - val_loss: 5.1648 - val_acc: 0.1624
+    Epoch 10/100
+    5416/5416 [==============================] - 13s - loss: 3.6264 - acc: 0.1712 - val_loss: 4.9255 - val_acc: 0.1823
+    Epoch 11/100
+    5416/5416 [==============================] - 12s - loss: 3.5117 - acc: 0.1874 - val_loss: 4.9749 - val_acc: 0.1720
+    Epoch 12/100
+    5416/5416 [==============================] - 12s - loss: 3.3981 - acc: 0.1946 - val_loss: 4.9022 - val_acc: 0.1579
+    Epoch 13/100
+    5416/5416 [==============================] - 12s - loss: 3.2891 - acc: 0.2049 - val_loss: 4.8402 - val_acc: 0.1764
+    Epoch 14/100
+    5416/5416 [==============================] - 12s - loss: 3.1873 - acc: 0.2110 - val_loss: 4.5853 - val_acc: 0.1845
+    Epoch 15/100
+    5416/5416 [==============================] - 12s - loss: 3.0907 - acc: 0.2219 - val_loss: 5.1283 - val_acc: 0.1756
+    Epoch 16/100
+    5416/5416 [==============================] - 12s - loss: 3.0043 - acc: 0.2284 - val_loss: 5.0700 - val_acc: 0.1756
+    Epoch 17/100
+    5416/5416 [==============================] - 12s - loss: 2.9160 - acc: 0.2358 - val_loss: 4.7551 - val_acc: 0.1889
+    Epoch 18/100
+    5416/5416 [==============================] - 12s - loss: 2.8268 - acc: 0.2415 - val_loss: 4.6989 - val_acc: 0.1934
+    Epoch 19/100
+    5416/5416 [==============================] - 12s - loss: 2.7509 - acc: 0.2491 - val_loss: 4.9063 - val_acc: 0.1793
+    Epoch 20/100
+    5416/5416 [==============================] - 12s - loss: 2.6763 - acc: 0.2552 - val_loss: 4.9980 - val_acc: 0.1963
+    Epoch 21/100
+    5416/5416 [==============================] - 12s - loss: 2.6095 - acc: 0.2598 - val_loss: 5.1065 - val_acc: 0.1786
+    Epoch 22/100
+    5416/5416 [==============================] - 12s - loss: 2.5481 - acc: 0.2618 - val_loss: 5.0910 - val_acc: 0.1860
+    Epoch 23/100
+    5416/5416 [==============================] - 12s - loss: 2.4915 - acc: 0.2674 - val_loss: 4.8941 - val_acc: 0.1823
+    Epoch 24/100
+    5416/5416 [==============================] - 12s - loss: 2.4329 - acc: 0.2718 - val_loss: 5.0100 - val_acc: 0.1956
+    Epoch 25/100
+    5416/5416 [==============================] - 12s - loss: 2.3882 - acc: 0.2738 - val_loss: 4.8169 - val_acc: 0.1904
+    Epoch 26/100
+    5416/5416 [==============================] - 12s - loss: 2.3450 - acc: 0.2775 - val_loss: 4.8757 - val_acc: 0.1897
+    Epoch 27/100
+    5416/5416 [==============================] - 12s - loss: 2.3100 - acc: 0.2768 - val_loss: 4.9787 - val_acc: 0.1904
+    Epoch 28/100
+    5416/5416 [==============================] - 12s - loss: 2.2664 - acc: 0.2797 - val_loss: 5.2358 - val_acc: 0.1860
+    Epoch 29/100
+    5416/5416 [==============================] - 12s - loss: 2.2370 - acc: 0.2779 - val_loss: 4.9575 - val_acc: 0.1889
+    Epoch 30/100
+    5416/5416 [==============================] - 12s - loss: 2.2106 - acc: 0.2810 - val_loss: 4.9762 - val_acc: 0.1867
+    Epoch 31/100
+    5416/5416 [==============================] - 12s - loss: 2.1863 - acc: 0.2831 - val_loss: 5.1884 - val_acc: 0.1919
+    Epoch 32/100
+    5416/5416 [==============================] - 12s - loss: 2.1611 - acc: 0.2794 - val_loss: 5.1367 - val_acc: 0.1911
+    Epoch 33/100
+    5416/5416 [==============================] - 12s - loss: 2.1454 - acc: 0.2790 - val_loss: 4.9238 - val_acc: 0.1919
+    Epoch 34/100
+    5416/5416 [==============================] - 12s - loss: 2.1266 - acc: 0.2760 - val_loss: 5.4054 - val_acc: 0.1830
+    Epoch 35/100
+    5416/5416 [==============================] - 13s - loss: 2.1177 - acc: 0.2779 - val_loss: 5.3747 - val_acc: 0.1830
+    Epoch 36/100
+    5416/5416 [==============================] - 13s - loss: 2.0977 - acc: 0.2816 - val_loss: 5.1336 - val_acc: 0.1926
+    Epoch 37/100
+    5416/5416 [==============================] - 13s - loss: 2.0938 - acc: 0.2784 - val_loss: 5.5416 - val_acc: 0.1852
+    Epoch 38/100
+    5416/5416 [==============================] - 13s - loss: 2.0861 - acc: 0.2753 - val_loss: 5.5524 - val_acc: 0.1963
+    Epoch 39/100
+    5416/5416 [==============================] - 13s - loss: 2.0787 - acc: 0.2751 - val_loss: 5.5944 - val_acc: 0.1860
+    Epoch 40/100
+    5416/5416 [==============================] - 13s - loss: 2.0731 - acc: 0.2762 - val_loss: 5.5925 - val_acc: 0.1830
+    Epoch 41/100
+    5416/5416 [==============================] - 12s - loss: 2.0718 - acc: 0.2736 - val_loss: 5.5799 - val_acc: 0.1845
+    Epoch 42/100
+    5416/5416 [==============================] - 12s - loss: 2.0607 - acc: 0.2758 - val_loss: 5.6479 - val_acc: 0.1823
+    Epoch 43/100
+    5416/5416 [==============================] - 12s - loss: 2.0599 - acc: 0.2731 - val_loss: 5.4292 - val_acc: 0.1852
+    Epoch 44/100
+    5416/5416 [==============================] - 12s - loss: 2.0625 - acc: 0.2716 - val_loss: 5.0826 - val_acc: 0.1690
+    Epoch 45/100
+    5416/5416 [==============================] - 12s - loss: 2.0587 - acc: 0.2720 - val_loss: 5.4436 - val_acc: 0.1882
+    Epoch 46/100
+    5416/5416 [==============================] - 13s - loss: 2.0603 - acc: 0.2749 - val_loss: 5.6231 - val_acc: 0.1830
+    Epoch 47/100
+    5416/5416 [==============================] - 15s - loss: 2.0532 - acc: 0.2734 - val_loss: 5.6191 - val_acc: 0.1838
+    Epoch 48/100
+    5416/5416 [==============================] - 14s - loss: 2.0436 - acc: 0.2718 - val_loss: 5.7750 - val_acc: 0.1875
+    Epoch 49/100
+    5416/5416 [==============================] - 14s - loss: 2.0496 - acc: 0.2755 - val_loss: 5.2422 - val_acc: 0.1734
+    Epoch 50/100
+    5416/5416 [==============================] - 14s - loss: 2.0445 - acc: 0.2718 - val_loss: 5.5985 - val_acc: 0.1801
+    Epoch 51/100
+    5416/5416 [==============================] - 15s - loss: 2.0456 - acc: 0.2720 - val_loss: 5.6386 - val_acc: 0.1749
+    Epoch 52/100
+    5416/5416 [==============================] - 13s - loss: 2.0412 - acc: 0.2698 - val_loss: 5.7255 - val_acc: 0.1756
+    Epoch 53/100
+    5416/5416 [==============================] - 12s - loss: 2.0424 - acc: 0.2727 - val_loss: 5.7396 - val_acc: 0.1860
+    Epoch 54/100
+    5416/5416 [==============================] - 13s - loss: 2.0377 - acc: 0.2659 - val_loss: 5.6861 - val_acc: 0.1830
+    Epoch 55/100
+    5416/5416 [==============================] - 13s - loss: 2.0390 - acc: 0.2710 - val_loss: 5.5182 - val_acc: 0.1734
+    Epoch 56/100
+    5416/5416 [==============================] - 13s - loss: 2.0385 - acc: 0.2746 - val_loss: 5.2374 - val_acc: 0.1653
+    Epoch 57/100
+    5416/5416 [==============================] - 12s - loss: 2.0451 - acc: 0.2709 - val_loss: 5.5901 - val_acc: 0.1786
+    Epoch 58/100
+    5416/5416 [==============================] - 12s - loss: 2.0429 - acc: 0.2703 - val_loss: 5.6682 - val_acc: 0.1815
+    Epoch 59/100
+    5416/5416 [==============================] - 12s - loss: 2.0348 - acc: 0.2740 - val_loss: 5.3139 - val_acc: 0.1727
+    Epoch 60/100
+    5416/5416 [==============================] - 12s - loss: 2.0412 - acc: 0.2707 - val_loss: 5.8074 - val_acc: 0.1675
+    Epoch 61/100
+    5416/5416 [==============================] - 12s - loss: 2.0385 - acc: 0.2705 - val_loss: 5.5649 - val_acc: 0.1845
+    Epoch 62/100
+    5416/5416 [==============================] - 12s - loss: 2.0415 - acc: 0.2734 - val_loss: 5.7590 - val_acc: 0.1860
+    Epoch 63/100
+    5416/5416 [==============================] - 12s - loss: 2.0383 - acc: 0.2710 - val_loss: 5.6200 - val_acc: 0.1801
+    Epoch 64/100
+    5416/5416 [==============================] - 13s - loss: 2.0259 - acc: 0.2760 - val_loss: 6.0232 - val_acc: 0.1845
+    Epoch 65/100
+    5416/5416 [==============================] - 12s - loss: 2.0410 - acc: 0.2714 - val_loss: 5.5053 - val_acc: 0.1808
+    Epoch 66/100
+    5416/5416 [==============================] - 13s - loss: 2.0340 - acc: 0.2729 - val_loss: 5.6386 - val_acc: 0.1801
+    Epoch 67/100
+    5416/5416 [==============================] - 13s - loss: 2.0339 - acc: 0.2768 - val_loss: 5.8394 - val_acc: 0.1882
+    Epoch 68/100
+    5416/5416 [==============================] - 13s - loss: 2.0364 - acc: 0.2749 - val_loss: 5.8444 - val_acc: 0.1764
+    Epoch 69/100
+    5416/5416 [==============================] - 14s - loss: 2.0339 - acc: 0.2727 - val_loss: 5.8542 - val_acc: 0.1823
+    Epoch 70/100
+    5416/5416 [==============================] - 14s - loss: 2.0392 - acc: 0.2718 - val_loss: 5.4362 - val_acc: 0.1786
+    Epoch 71/100
+    5416/5416 [==============================] - 14s - loss: 2.0296 - acc: 0.2747 - val_loss: 5.3432 - val_acc: 0.1712
+    Epoch 72/100
+    5416/5416 [==============================] - 12s - loss: 2.0271 - acc: 0.2716 - val_loss: 5.9688 - val_acc: 0.1808
+    Epoch 73/100
+    5416/5416 [==============================] - 13s - loss: 2.0399 - acc: 0.2722 - val_loss: 5.5102 - val_acc: 0.1845
+    Epoch 74/100
+    5416/5416 [==============================] - 13s - loss: 2.0358 - acc: 0.2733 - val_loss: 5.7907 - val_acc: 0.1779
+    Epoch 75/100
+    5416/5416 [==============================] - 13s - loss: 2.0276 - acc: 0.2696 - val_loss: 5.7884 - val_acc: 0.1838
+    Epoch 76/100
+    5416/5416 [==============================] - 13s - loss: 2.0369 - acc: 0.2746 - val_loss: 5.7786 - val_acc: 0.1771
+    Epoch 77/100
+    5416/5416 [==============================] - 13s - loss: 2.0281 - acc: 0.2753 - val_loss: 5.5400 - val_acc: 0.1727
+    Epoch 78/100
+    5416/5416 [==============================] - 15s - loss: 2.0299 - acc: 0.2770 - val_loss: 5.7449 - val_acc: 0.1830
+    Epoch 79/100
+    5416/5416 [==============================] - 15s - loss: 2.0309 - acc: 0.2714 - val_loss: 5.6931 - val_acc: 0.1830
+    Epoch 80/100
+    5416/5416 [==============================] - 13s - loss: 2.0297 - acc: 0.2725 - val_loss: 5.9119 - val_acc: 0.1749
+    Epoch 81/100
+    5416/5416 [==============================] - 12s - loss: 2.0295 - acc: 0.2699 - val_loss: 5.7339 - val_acc: 0.1882
+    Epoch 82/100
+    5416/5416 [==============================] - 12s - loss: 2.0334 - acc: 0.2733 - val_loss: 5.7446 - val_acc: 0.1793
+    Epoch 83/100
+    5416/5416 [==============================] - 12s - loss: 2.0309 - acc: 0.2722 - val_loss: 5.5654 - val_acc: 0.1793
+    Epoch 84/100
+    5416/5416 [==============================] - 12s - loss: 2.0288 - acc: 0.2747 - val_loss: 5.5971 - val_acc: 0.1793
+    Epoch 85/100
+    5416/5416 [==============================] - 13s - loss: 2.0260 - acc: 0.2722 - val_loss: 5.9274 - val_acc: 0.1712
+    Epoch 86/100
+    5416/5416 [==============================] - 13s - loss: 2.0345 - acc: 0.2747 - val_loss: 5.7473 - val_acc: 0.1875
+    Epoch 87/100
+    5416/5416 [==============================] - 12s - loss: 2.0306 - acc: 0.2733 - val_loss: 5.6444 - val_acc: 0.1801
+    Epoch 88/100
+    5416/5416 [==============================] - 13s - loss: 2.0295 - acc: 0.2753 - val_loss: 5.7132 - val_acc: 0.1742
+    Epoch 89/100
+    5416/5416 [==============================] - 13s - loss: 2.0314 - acc: 0.2723 - val_loss: 5.7616 - val_acc: 0.1815
+    Epoch 90/100
+    5416/5416 [==============================] - 13s - loss: 2.0344 - acc: 0.2736 - val_loss: 5.4261 - val_acc: 0.1734
+    Epoch 91/100
+    5416/5416 [==============================] - 13s - loss: 2.0299 - acc: 0.2670 - val_loss: 5.5118 - val_acc: 0.1801
+    Epoch 92/100
+    5416/5416 [==============================] - 13s - loss: 2.0327 - acc: 0.2749 - val_loss: 5.5915 - val_acc: 0.1779
+    Epoch 93/100
+    5416/5416 [==============================] - 14s - loss: 2.0240 - acc: 0.2782 - val_loss: 5.6751 - val_acc: 0.1838
+    Epoch 94/100
+    5416/5416 [==============================] - 13s - loss: 2.0363 - acc: 0.2723 - val_loss: 5.7031 - val_acc: 0.1712
+    Epoch 95/100
+    5416/5416 [==============================] - 12s - loss: 2.0290 - acc: 0.2712 - val_loss: 6.0503 - val_acc: 0.1742
+    Epoch 96/100
+    5416/5416 [==============================] - 13s - loss: 2.0261 - acc: 0.2733 - val_loss: 5.4784 - val_acc: 0.1779
+    Epoch 97/100
+    5416/5416 [==============================] - 12s - loss: 2.0278 - acc: 0.2746 - val_loss: 5.8021 - val_acc: 0.1801
+    Epoch 98/100
+    5416/5416 [==============================] - 13s - loss: 2.0308 - acc: 0.2722 - val_loss: 5.9849 - val_acc: 0.1749
+    Epoch 99/100
+    5416/5416 [==============================] - 12s - loss: 2.0305 - acc: 0.2727 - val_loss: 5.9407 - val_acc: 0.1845
+    Epoch 100/100
+    5416/5416 [==============================] - 12s - loss: 2.0315 - acc: 0.2725 - val_loss: 5.7821 - val_acc: 0.1889
+    Train on 11709 samples, validate on 2928 samples
+    Epoch 1/50
+    11709/11709 [==============================] - 28s - loss: 4.6179 - acc: 0.0724 - val_loss: 4.2989 - val_acc: 0.1373
+    Epoch 2/50
+    11709/11709 [==============================] - 27s - loss: 4.3838 - acc: 0.0991 - val_loss: 4.2906 - val_acc: 0.0686
+    Epoch 3/50
+    11709/11709 [==============================] - 27s - loss: 4.2055 - acc: 0.1303 - val_loss: 4.1885 - val_acc: 0.1708
+    Epoch 4/50
+    11709/11709 [==============================] - 27s - loss: 3.9465 - acc: 0.1888 - val_loss: 4.0530 - val_acc: 0.1820
+    Epoch 5/50
+    11709/11709 [==============================] - 27s - loss: 3.7127 - acc: 0.2086 - val_loss: 3.9590 - val_acc: 0.1957
+    Epoch 6/50
+    11709/11709 [==============================] - 28s - loss: 3.5082 - acc: 0.2259 - val_loss: 3.8788 - val_acc: 0.2005
+    Epoch 7/50
+    11709/11709 [==============================] - 27s - loss: 3.3358 - acc: 0.2327 - val_loss: 3.8042 - val_acc: 0.2015
+    Epoch 8/50
+    11709/11709 [==============================] - 27s - loss: 3.1769 - acc: 0.2422 - val_loss: 3.8452 - val_acc: 0.2046
+    Epoch 9/50
+    11709/11709 [==============================] - 27s - loss: 3.0378 - acc: 0.2520 - val_loss: 3.8168 - val_acc: 0.2053
+    Epoch 10/50
+    11709/11709 [==============================] - 27s - loss: 2.9137 - acc: 0.2631 - val_loss: 3.8857 - val_acc: 0.2056
+    Epoch 11/50
+    11709/11709 [==============================] - 28s - loss: 2.8026 - acc: 0.2711 - val_loss: 3.8880 - val_acc: 0.2049
+    Epoch 12/50
+    11709/11709 [==============================] - 27s - loss: 2.7100 - acc: 0.2754 - val_loss: 3.9750 - val_acc: 0.2042
+    Epoch 13/50
+    11709/11709 [==============================] - 27s - loss: 2.6340 - acc: 0.2804 - val_loss: 4.0935 - val_acc: 0.1950
+    Epoch 14/50
+    11709/11709 [==============================] - 27s - loss: 2.5720 - acc: 0.2846 - val_loss: 4.0220 - val_acc: 0.2042
+    Epoch 15/50
+    11709/11709 [==============================] - 27s - loss: 2.5249 - acc: 0.2858 - val_loss: 4.0326 - val_acc: 0.2046
+    Epoch 16/50
+    11709/11709 [==============================] - 27s - loss: 2.4842 - acc: 0.2892 - val_loss: 4.0543 - val_acc: 0.2042
+    Epoch 17/50
+    11709/11709 [==============================] - 27s - loss: 2.4498 - acc: 0.2926 - val_loss: 4.1119 - val_acc: 0.2066
+    Epoch 18/50
+    11709/11709 [==============================] - 27s - loss: 2.4282 - acc: 0.2923 - val_loss: 4.2139 - val_acc: 0.2059
+    Epoch 19/50
+    11709/11709 [==============================] - 27s - loss: 2.4092 - acc: 0.2908 - val_loss: 4.3102 - val_acc: 0.2012
+    Epoch 20/50
+    11709/11709 [==============================] - 27s - loss: 2.3901 - acc: 0.2911 - val_loss: 4.1829 - val_acc: 0.2046
+    Epoch 21/50
+    11709/11709 [==============================] - 27s - loss: 2.3785 - acc: 0.2917 - val_loss: 4.2453 - val_acc: 0.2049
+    Epoch 22/50
+    11709/11709 [==============================] - 27s - loss: 2.3695 - acc: 0.2913 - val_loss: 4.3196 - val_acc: 0.2063
+    Epoch 23/50
+    11709/11709 [==============================] - 27s - loss: 2.3549 - acc: 0.2923 - val_loss: 4.2541 - val_acc: 0.2042
+    Epoch 24/50
+    11709/11709 [==============================] - 27s - loss: 2.3480 - acc: 0.2902 - val_loss: 4.2755 - val_acc: 0.1923
+    Epoch 25/50
+    11709/11709 [==============================] - 27s - loss: 2.3421 - acc: 0.2935 - val_loss: 4.2779 - val_acc: 0.2053
+    Epoch 26/50
+    11709/11709 [==============================] - 28s - loss: 2.3357 - acc: 0.2927 - val_loss: 4.3729 - val_acc: 0.2066
+    Epoch 27/50
+    11709/11709 [==============================] - 27s - loss: 2.3382 - acc: 0.2912 - val_loss: 4.2779 - val_acc: 0.2015
+    Epoch 28/50
+    11709/11709 [==============================] - 27s - loss: 2.3345 - acc: 0.2911 - val_loss: 4.2967 - val_acc: 0.2029
+    Epoch 29/50
+    11709/11709 [==============================] - 27s - loss: 2.3272 - acc: 0.2934 - val_loss: 4.4001 - val_acc: 0.2053
+    Epoch 30/50
+    11709/11709 [==============================] - 27s - loss: 2.3252 - acc: 0.2914 - val_loss: 4.3074 - val_acc: 0.2008
+    Epoch 31/50
+    11709/11709 [==============================] - 27s - loss: 2.3204 - acc: 0.2921 - val_loss: 4.4425 - val_acc: 0.2008
+    Epoch 32/50
+    11709/11709 [==============================] - 27s - loss: 2.3234 - acc: 0.2908 - val_loss: 4.4213 - val_acc: 0.2008
+    Epoch 33/50
+    11709/11709 [==============================] - 27s - loss: 2.3201 - acc: 0.2917 - val_loss: 4.3472 - val_acc: 0.1998
+    Epoch 34/50
+    11709/11709 [==============================] - 27s - loss: 2.3145 - acc: 0.2917 - val_loss: 4.3941 - val_acc: 0.2032
+    Epoch 35/50
+    11709/11709 [==============================] - 27s - loss: 2.3161 - acc: 0.2907 - val_loss: 4.3834 - val_acc: 0.2015
+    Epoch 36/50
+    11709/11709 [==============================] - 27s - loss: 2.3121 - acc: 0.2924 - val_loss: 4.3683 - val_acc: 0.1988
+    Epoch 37/50
+    11709/11709 [==============================] - 27s - loss: 2.3144 - acc: 0.2923 - val_loss: 4.3668 - val_acc: 0.2001
+    Epoch 38/50
+    11709/11709 [==============================] - 28s - loss: 2.3055 - acc: 0.2934 - val_loss: 4.3836 - val_acc: 0.1988
+    Epoch 39/50
+    11709/11709 [==============================] - 27s - loss: 2.3061 - acc: 0.2929 - val_loss: 4.4449 - val_acc: 0.2022
+    Epoch 40/50
+    11709/11709 [==============================] - 27s - loss: 2.3090 - acc: 0.2929 - val_loss: 4.3603 - val_acc: 0.1991
+    Epoch 41/50
+    11709/11709 [==============================] - 27s - loss: 2.3120 - acc: 0.2907 - val_loss: 4.4100 - val_acc: 0.2005
+    Epoch 42/50
+    11709/11709 [==============================] - 27s - loss: 2.3072 - acc: 0.2921 - val_loss: 4.4772 - val_acc: 0.2008
+    Epoch 43/50
+    11709/11709 [==============================] - 27s - loss: 2.3114 - acc: 0.2894 - val_loss: 4.4434 - val_acc: 0.2025
+    Epoch 44/50
+    11709/11709 [==============================] - 27s - loss: 2.2982 - acc: 0.2934 - val_loss: 4.4066 - val_acc: 0.1899
+    Epoch 45/50
+    11709/11709 [==============================] - 27s - loss: 2.3059 - acc: 0.2918 - val_loss: 4.5444 - val_acc: 0.1923
+    Epoch 46/50
+    11709/11709 [==============================] - 28s - loss: 2.3034 - acc: 0.2938 - val_loss: 4.4077 - val_acc: 0.1977
+    Epoch 47/50
+    11709/11709 [==============================] - 27s - loss: 2.3011 - acc: 0.2931 - val_loss: 4.4124 - val_acc: 0.1971
+    Epoch 48/50
+    11709/11709 [==============================] - 27s - loss: 2.2972 - acc: 0.2927 - val_loss: 4.5202 - val_acc: 0.2025
+    Epoch 49/50
+    11709/11709 [==============================] - 27s - loss: 2.3001 - acc: 0.2925 - val_loss: 4.5174 - val_acc: 0.2005
+    Epoch 50/50
+    11709/11709 [==============================] - 27s - loss: 2.3030 - acc: 0.2919 - val_loss: 4.4668 - val_acc: 0.2032
+    Train on 3723 samples, validate on 931 samples
+    Epoch 1/100
+    3723/3723 [==============================] - 8s - loss: 4.3915 - acc: 0.0309 - val_loss: 4.1296 - val_acc: 0.0494
+    Epoch 2/100
+    3723/3723 [==============================] - 9s - loss: 4.0610 - acc: 0.0642 - val_loss: 4.1530 - val_acc: 0.0730
+    Epoch 3/100
+    3723/3723 [==============================] - 9s - loss: 4.0158 - acc: 0.0814 - val_loss: 4.2079 - val_acc: 0.0730
+    Epoch 4/100
+    3723/3723 [==============================] - 10s - loss: 3.9840 - acc: 0.0814 - val_loss: 4.2340 - val_acc: 0.0730
+    Epoch 5/100
+    3723/3723 [==============================] - 9s - loss: 3.9418 - acc: 0.0814 - val_loss: 4.2634 - val_acc: 0.0730
+    Epoch 6/100
+    3723/3723 [==============================] - 8s - loss: 3.9107 - acc: 0.0814 - val_loss: 4.3290 - val_acc: 0.0730
+    Epoch 7/100
+    3723/3723 [==============================] - 8s - loss: 3.8572 - acc: 0.0889 - val_loss: 4.3935 - val_acc: 0.1117
+    Epoch 8/100
+    3723/3723 [==============================] - 8s - loss: 3.7788 - acc: 0.1381 - val_loss: 4.4175 - val_acc: 0.1235
+    Epoch 9/100
+    3723/3723 [==============================] - 8s - loss: 3.6960 - acc: 0.1469 - val_loss: 4.3751 - val_acc: 0.1117
+    Epoch 10/100
+    3723/3723 [==============================] - 8s - loss: 3.5961 - acc: 0.1708 - val_loss: 4.3270 - val_acc: 0.1353
+    Epoch 11/100
+    3723/3723 [==============================] - 8s - loss: 3.5175 - acc: 0.1789 - val_loss: 4.2932 - val_acc: 0.1375
+    Epoch 12/100
+    3723/3723 [==============================] - 8s - loss: 3.4356 - acc: 0.1929 - val_loss: 4.2182 - val_acc: 0.1600
+    Epoch 13/100
+    3723/3723 [==============================] - 8s - loss: 3.3517 - acc: 0.1982 - val_loss: 4.2027 - val_acc: 0.1676
+    Epoch 14/100
+    3723/3723 [==============================] - 8s - loss: 3.2685 - acc: 0.2071 - val_loss: 4.1985 - val_acc: 0.1600
+    Epoch 15/100
+    3723/3723 [==============================] - 8s - loss: 3.1890 - acc: 0.2114 - val_loss: 4.1439 - val_acc: 0.1643
+    Epoch 16/100
+    3723/3723 [==============================] - 8s - loss: 3.1125 - acc: 0.2184 - val_loss: 4.1336 - val_acc: 0.1654
+    Epoch 17/100
+    3723/3723 [==============================] - 8s - loss: 3.0449 - acc: 0.2259 - val_loss: 4.0528 - val_acc: 0.1708
+    Epoch 18/100
+    3723/3723 [==============================] - 8s - loss: 2.9737 - acc: 0.2321 - val_loss: 4.0897 - val_acc: 0.1740
+    Epoch 19/100
+    3723/3723 [==============================] - 8s - loss: 2.8999 - acc: 0.2380 - val_loss: 4.0556 - val_acc: 0.1729
+    Epoch 20/100
+    3723/3723 [==============================] - 8s - loss: 2.8396 - acc: 0.2458 - val_loss: 4.0452 - val_acc: 0.1751
+    Epoch 21/100
+    3723/3723 [==============================] - 8s - loss: 2.7690 - acc: 0.2487 - val_loss: 4.0557 - val_acc: 0.1729
+    Epoch 22/100
+    3723/3723 [==============================] - 8s - loss: 2.7131 - acc: 0.2562 - val_loss: 4.0228 - val_acc: 0.1719
+    Epoch 23/100
+    3723/3723 [==============================] - 8s - loss: 2.6530 - acc: 0.2622 - val_loss: 4.0194 - val_acc: 0.1719
+    Epoch 24/100
+    3723/3723 [==============================] - 8s - loss: 2.5920 - acc: 0.2667 - val_loss: 3.9820 - val_acc: 0.1729
+    Epoch 25/100
+    3723/3723 [==============================] - 8s - loss: 2.5370 - acc: 0.2759 - val_loss: 4.0198 - val_acc: 0.1719
+    Epoch 26/100
+    3723/3723 [==============================] - 9s - loss: 2.4785 - acc: 0.2783 - val_loss: 4.0760 - val_acc: 0.1751
+    Epoch 27/100
+    3723/3723 [==============================] - 8s - loss: 2.4290 - acc: 0.2826 - val_loss: 4.0041 - val_acc: 0.1751
+    Epoch 28/100
+    3723/3723 [==============================] - 8s - loss: 2.3762 - acc: 0.2871 - val_loss: 4.0638 - val_acc: 0.1665
+    Epoch 29/100
+    3723/3723 [==============================] - 8s - loss: 2.3273 - acc: 0.2912 - val_loss: 4.0842 - val_acc: 0.1729
+    Epoch 30/100
+    3723/3723 [==============================] - 9s - loss: 2.2821 - acc: 0.2949 - val_loss: 4.1316 - val_acc: 0.1643
+    Epoch 31/100
+    3723/3723 [==============================] - 8s - loss: 2.2399 - acc: 0.2912 - val_loss: 4.1788 - val_acc: 0.1740
+    Epoch 32/100
+    3723/3723 [==============================] - 8s - loss: 2.2031 - acc: 0.2957 - val_loss: 4.1272 - val_acc: 0.1686
+    Epoch 33/100
+    3723/3723 [==============================] - 8s - loss: 2.1590 - acc: 0.2990 - val_loss: 4.1713 - val_acc: 0.1719
+    Epoch 34/100
+    3723/3723 [==============================] - 8s - loss: 2.1235 - acc: 0.3006 - val_loss: 4.0760 - val_acc: 0.1611
+    Epoch 35/100
+    3723/3723 [==============================] - 8s - loss: 2.0936 - acc: 0.3035 - val_loss: 4.1340 - val_acc: 0.1686
+    Epoch 36/100
+    3723/3723 [==============================] - 8s - loss: 2.0638 - acc: 0.3041 - val_loss: 4.2239 - val_acc: 0.1751
+    Epoch 37/100
+    3723/3723 [==============================] - 8s - loss: 2.0372 - acc: 0.3086 - val_loss: 4.2553 - val_acc: 0.1762
+    Epoch 38/100
+    3723/3723 [==============================] - 8s - loss: 2.0065 - acc: 0.3094 - val_loss: 4.2648 - val_acc: 0.1686
+    Epoch 39/100
+    3723/3723 [==============================] - 8s - loss: 1.9858 - acc: 0.3159 - val_loss: 4.2885 - val_acc: 0.1708
+    Epoch 40/100
+    3723/3723 [==============================] - 8s - loss: 1.9601 - acc: 0.3145 - val_loss: 4.3067 - val_acc: 0.1697
+    Epoch 41/100
+    3723/3723 [==============================] - 8s - loss: 1.9449 - acc: 0.3172 - val_loss: 4.2585 - val_acc: 0.1654
+    Epoch 42/100
+    3723/3723 [==============================] - 8s - loss: 1.9261 - acc: 0.3116 - val_loss: 4.3439 - val_acc: 0.1654
+    Epoch 43/100
+    3723/3723 [==============================] - 8s - loss: 1.9029 - acc: 0.3127 - val_loss: 4.4102 - val_acc: 0.1751
+    Epoch 44/100
+    3723/3723 [==============================] - 8s - loss: 1.8976 - acc: 0.3100 - val_loss: 4.3908 - val_acc: 0.1708
+    Epoch 45/100
+    3723/3723 [==============================] - 8s - loss: 1.8760 - acc: 0.3094 - val_loss: 4.3926 - val_acc: 0.1643
+    Epoch 46/100
+    3723/3723 [==============================] - 8s - loss: 1.8702 - acc: 0.3156 - val_loss: 4.4345 - val_acc: 0.1686
+    Epoch 47/100
+    3723/3723 [==============================] - 9s - loss: 1.8578 - acc: 0.3118 - val_loss: 4.4250 - val_acc: 0.1686
+    Epoch 48/100
+    3723/3723 [==============================] - 8s - loss: 1.8518 - acc: 0.3054 - val_loss: 4.3859 - val_acc: 0.1525
+    Epoch 49/100
+    3723/3723 [==============================] - 9s - loss: 1.8455 - acc: 0.3110 - val_loss: 4.5548 - val_acc: 0.1762
+    Epoch 50/100
+    3723/3723 [==============================] - 8s - loss: 1.8388 - acc: 0.3043 - val_loss: 4.5080 - val_acc: 0.1643
+    Epoch 51/100
+    3723/3723 [==============================] - 8s - loss: 1.8315 - acc: 0.3097 - val_loss: 4.5879 - val_acc: 0.1697
+    Epoch 52/100
+    3723/3723 [==============================] - 8s - loss: 1.8225 - acc: 0.3030 - val_loss: 4.5075 - val_acc: 0.1493
+    Epoch 53/100
+    3723/3723 [==============================] - 8s - loss: 1.8239 - acc: 0.3108 - val_loss: 4.5590 - val_acc: 0.1633
+    Epoch 54/100
+    3723/3723 [==============================] - 8s - loss: 1.8076 - acc: 0.3110 - val_loss: 4.7617 - val_acc: 0.1762
+    Epoch 55/100
+    3723/3723 [==============================] - 9s - loss: 1.8186 - acc: 0.3070 - val_loss: 4.5710 - val_acc: 0.1547
+    Epoch 56/100
+    3723/3723 [==============================] - 8s - loss: 1.8092 - acc: 0.3038 - val_loss: 4.7421 - val_acc: 0.1826
+    Epoch 57/100
+    3723/3723 [==============================] - 8s - loss: 1.8144 - acc: 0.3049 - val_loss: 4.6491 - val_acc: 0.1643
+    Epoch 58/100
+    3723/3723 [==============================] - 9s - loss: 1.7999 - acc: 0.3049 - val_loss: 4.7076 - val_acc: 0.1708
+    Epoch 59/100
+    3723/3723 [==============================] - 9s - loss: 1.8042 - acc: 0.3051 - val_loss: 4.7302 - val_acc: 0.1708
+    Epoch 60/100
+    3723/3723 [==============================] - 9s - loss: 1.7987 - acc: 0.3062 - val_loss: 4.7115 - val_acc: 0.1676
+    Epoch 61/100
+    3723/3723 [==============================] - 8s - loss: 1.8001 - acc: 0.3051 - val_loss: 4.7196 - val_acc: 0.1719
+    Epoch 62/100
+    3723/3723 [==============================] - 8s - loss: 1.7922 - acc: 0.3057 - val_loss: 4.8497 - val_acc: 0.1697
+    Epoch 63/100
+    3723/3723 [==============================] - 8s - loss: 1.7969 - acc: 0.3108 - val_loss: 4.8451 - val_acc: 0.1772
+    Epoch 64/100
+    3723/3723 [==============================] - 8s - loss: 1.7948 - acc: 0.3043 - val_loss: 4.7399 - val_acc: 0.1643
+    Epoch 65/100
+    3723/3723 [==============================] - 8s - loss: 1.7911 - acc: 0.3041 - val_loss: 4.7548 - val_acc: 0.1697
+    Epoch 66/100
+    3723/3723 [==============================] - 9s - loss: 1.7960 - acc: 0.3024 - val_loss: 4.8197 - val_acc: 0.1676
+    Epoch 67/100
+    3723/3723 [==============================] - 8s - loss: 1.7846 - acc: 0.3049 - val_loss: 4.7509 - val_acc: 0.1708
+    Epoch 68/100
+    3723/3723 [==============================] - 8s - loss: 1.7878 - acc: 0.3084 - val_loss: 4.7882 - val_acc: 0.1729
+    Epoch 69/100
+    3723/3723 [==============================] - 8s - loss: 1.7937 - acc: 0.3073 - val_loss: 4.8213 - val_acc: 0.1729
+    Epoch 70/100
+    3723/3723 [==============================] - 8s - loss: 1.7831 - acc: 0.3057 - val_loss: 4.7351 - val_acc: 0.1665
+    Epoch 71/100
+    3723/3723 [==============================] - 8s - loss: 1.7929 - acc: 0.3097 - val_loss: 4.7378 - val_acc: 0.1579
+    Epoch 72/100
+    3723/3723 [==============================] - 8s - loss: 1.7866 - acc: 0.3054 - val_loss: 4.8023 - val_acc: 0.1708
+    Epoch 73/100
+    3723/3723 [==============================] - 8s - loss: 1.7869 - acc: 0.3046 - val_loss: 4.7604 - val_acc: 0.1611
+    Epoch 74/100
+    3723/3723 [==============================] - 8s - loss: 1.7891 - acc: 0.3049 - val_loss: 4.8210 - val_acc: 0.1708
+    Epoch 75/100
+    3723/3723 [==============================] - 8s - loss: 1.7840 - acc: 0.3059 - val_loss: 4.9351 - val_acc: 0.1751
+    Epoch 76/100
+    3723/3723 [==============================] - 8s - loss: 1.7895 - acc: 0.3016 - val_loss: 4.7275 - val_acc: 0.1633
+    Epoch 77/100
+    3723/3723 [==============================] - 8s - loss: 1.7824 - acc: 0.3030 - val_loss: 4.8608 - val_acc: 0.1751
+    Epoch 78/100
+    3723/3723 [==============================] - 8s - loss: 1.7869 - acc: 0.3035 - val_loss: 4.7697 - val_acc: 0.1568
+    Epoch 79/100
+    3723/3723 [==============================] - 8s - loss: 1.7853 - acc: 0.3108 - val_loss: 4.8027 - val_acc: 0.1654
+    Epoch 80/100
+    3723/3723 [==============================] - 8s - loss: 1.7925 - acc: 0.3062 - val_loss: 4.8818 - val_acc: 0.1536
+    Epoch 81/100
+    3723/3723 [==============================] - 8s - loss: 1.7754 - acc: 0.3035 - val_loss: 4.9331 - val_acc: 0.1772
+    Epoch 82/100
+    3723/3723 [==============================] - 8s - loss: 1.7792 - acc: 0.3057 - val_loss: 4.8158 - val_acc: 0.1504
+    Epoch 83/100
+    3723/3723 [==============================] - 8s - loss: 1.7862 - acc: 0.3062 - val_loss: 4.9009 - val_acc: 0.1611
+    Epoch 84/100
+    3723/3723 [==============================] - 8s - loss: 1.7746 - acc: 0.3092 - val_loss: 4.8677 - val_acc: 0.1762
+    Epoch 85/100
+    3723/3723 [==============================] - 9s - loss: 1.7779 - acc: 0.3054 - val_loss: 4.8512 - val_acc: 0.1547
+    Epoch 86/100
+    3723/3723 [==============================] - 8s - loss: 1.7847 - acc: 0.3067 - val_loss: 4.8604 - val_acc: 0.1708
+    Epoch 87/100
+    3723/3723 [==============================] - 8s - loss: 1.7793 - acc: 0.3075 - val_loss: 4.9535 - val_acc: 0.1729
+    Epoch 88/100
+    3723/3723 [==============================] - 8s - loss: 1.7802 - acc: 0.3041 - val_loss: 4.7213 - val_acc: 0.1686
+    Epoch 89/100
+    3723/3723 [==============================] - 8s - loss: 1.7768 - acc: 0.3075 - val_loss: 4.8783 - val_acc: 0.1762
+    Epoch 90/100
+    3723/3723 [==============================] - 8s - loss: 1.7789 - acc: 0.3041 - val_loss: 4.9059 - val_acc: 0.1740
+    Epoch 91/100
+    3723/3723 [==============================] - 8s - loss: 1.7801 - acc: 0.3089 - val_loss: 4.7526 - val_acc: 0.1547
+    Epoch 92/100
+    3723/3723 [==============================] - 8s - loss: 1.7763 - acc: 0.3092 - val_loss: 4.7783 - val_acc: 0.1654
+    Epoch 93/100
+    3723/3723 [==============================] - 8s - loss: 1.7762 - acc: 0.3059 - val_loss: 4.8701 - val_acc: 0.1708
+    Epoch 94/100
+    3723/3723 [==============================] - 8s - loss: 1.7742 - acc: 0.3110 - val_loss: 4.8465 - val_acc: 0.1633
+    Epoch 95/100
+    3723/3723 [==============================] - 8s - loss: 1.7766 - acc: 0.3054 - val_loss: 4.8990 - val_acc: 0.1665
+    Epoch 96/100
+    3723/3723 [==============================] - 8s - loss: 1.7716 - acc: 0.3110 - val_loss: 4.8630 - val_acc: 0.1762
+    Epoch 97/100
+    3723/3723 [==============================] - 8s - loss: 1.7828 - acc: 0.3067 - val_loss: 4.8492 - val_acc: 0.1568
+    Epoch 98/100
+    3723/3723 [==============================] - 8s - loss: 1.7672 - acc: 0.3067 - val_loss: 4.6980 - val_acc: 0.1622
+    Epoch 99/100
+    3723/3723 [==============================] - 8s - loss: 1.7862 - acc: 0.3086 - val_loss: 4.9222 - val_acc: 0.1719
+    Epoch 100/100
+    3723/3723 [==============================] - 9s - loss: 1.7676 - acc: 0.3113 - val_loss: 4.8230 - val_acc: 0.1611
+    Train on 5179 samples, validate on 1295 samples
+    Epoch 1/100
+    5179/5179 [==============================] - 12s - loss: 4.4711 - acc: 0.0272 - val_loss: 4.6353 - val_acc: 0.0355
+    Epoch 2/100
+    5179/5179 [==============================] - 12s - loss: 4.1705 - acc: 0.0828 - val_loss: 4.6964 - val_acc: 0.0795
+    Epoch 3/100
+    5179/5179 [==============================] - 12s - loss: 4.1100 - acc: 0.0855 - val_loss: 4.7488 - val_acc: 0.0795
+    Epoch 4/100
+    5179/5179 [==============================] - 12s - loss: 4.0570 - acc: 0.0931 - val_loss: 4.8133 - val_acc: 0.0795
+    Epoch 5/100
+    5179/5179 [==============================] - 12s - loss: 3.9888 - acc: 0.1014 - val_loss: 4.8351 - val_acc: 0.0795
+    Epoch 6/100
+    5179/5179 [==============================] - 12s - loss: 3.8770 - acc: 0.1527 - val_loss: 4.8333 - val_acc: 0.1707
+    Epoch 7/100
+    5179/5179 [==============================] - 12s - loss: 3.7466 - acc: 0.1782 - val_loss: 4.8909 - val_acc: 0.1683
+    Epoch 8/100
+    5179/5179 [==============================] - 12s - loss: 3.6152 - acc: 0.1912 - val_loss: 4.8499 - val_acc: 0.1753
+    Epoch 9/100
+    5179/5179 [==============================] - 12s - loss: 3.4916 - acc: 0.1979 - val_loss: 4.7304 - val_acc: 0.1714
+    Epoch 10/100
+    5179/5179 [==============================] - 12s - loss: 3.3738 - acc: 0.2060 - val_loss: 4.7101 - val_acc: 0.1768
+    Epoch 11/100
+    5179/5179 [==============================] - 12s - loss: 3.2659 - acc: 0.2168 - val_loss: 4.5853 - val_acc: 0.1768
+    Epoch 12/100
+    5179/5179 [==============================] - 12s - loss: 3.1580 - acc: 0.2215 - val_loss: 4.6055 - val_acc: 0.1838
+    Epoch 13/100
+    5179/5179 [==============================] - 12s - loss: 3.0593 - acc: 0.2360 - val_loss: 4.5943 - val_acc: 0.1830
+    Epoch 14/100
+    5179/5179 [==============================] - 12s - loss: 2.9670 - acc: 0.2402 - val_loss: 4.6076 - val_acc: 0.1830
+    Epoch 15/100
+    5179/5179 [==============================] - 12s - loss: 2.8777 - acc: 0.2518 - val_loss: 4.5718 - val_acc: 0.1853
+    Epoch 16/100
+    5179/5179 [==============================] - 12s - loss: 2.7916 - acc: 0.2595 - val_loss: 4.5158 - val_acc: 0.1892
+    Epoch 17/100
+    5179/5179 [==============================] - 12s - loss: 2.7088 - acc: 0.2740 - val_loss: 4.4648 - val_acc: 0.1861
+    Epoch 18/100
+    5179/5179 [==============================] - 12s - loss: 2.6317 - acc: 0.2784 - val_loss: 4.4648 - val_acc: 0.1884
+    Epoch 19/100
+    5179/5179 [==============================] - 12s - loss: 2.5589 - acc: 0.2875 - val_loss: 4.4382 - val_acc: 0.1884
+    Epoch 20/100
+    5179/5179 [==============================] - 12s - loss: 2.4845 - acc: 0.2945 - val_loss: 4.4737 - val_acc: 0.1907
+    Epoch 21/100
+    5179/5179 [==============================] - 12s - loss: 2.4198 - acc: 0.2985 - val_loss: 4.6298 - val_acc: 0.1907
+    Epoch 22/100
+    5179/5179 [==============================] - 12s - loss: 2.3580 - acc: 0.3008 - val_loss: 4.5946 - val_acc: 0.1900
+    Epoch 23/100
+    5179/5179 [==============================] - 12s - loss: 2.3000 - acc: 0.3049 - val_loss: 4.5508 - val_acc: 0.1915
+    Epoch 24/100
+    5179/5179 [==============================] - 12s - loss: 2.2464 - acc: 0.3068 - val_loss: 4.5326 - val_acc: 0.1946
+    Epoch 25/100
+    5179/5179 [==============================] - 12s - loss: 2.1905 - acc: 0.3140 - val_loss: 4.5421 - val_acc: 0.1907
+    Epoch 26/100
+    5179/5179 [==============================] - 12s - loss: 2.1487 - acc: 0.3178 - val_loss: 4.6086 - val_acc: 0.1923
+    Epoch 27/100
+    5179/5179 [==============================] - 12s - loss: 2.1051 - acc: 0.3180 - val_loss: 4.6876 - val_acc: 0.1907
+    Epoch 28/100
+    5179/5179 [==============================] - 12s - loss: 2.0676 - acc: 0.3184 - val_loss: 4.7328 - val_acc: 0.1931
+    Epoch 29/100
+    5179/5179 [==============================] - 12s - loss: 2.0355 - acc: 0.3163 - val_loss: 4.7234 - val_acc: 0.1969
+    Epoch 30/100
+    5179/5179 [==============================] - 12s - loss: 2.0030 - acc: 0.3209 - val_loss: 4.6757 - val_acc: 0.1931
+    Epoch 31/100
+    5179/5179 [==============================] - 12s - loss: 1.9774 - acc: 0.3267 - val_loss: 4.7624 - val_acc: 0.1907
+    Epoch 32/100
+    5179/5179 [==============================] - 12s - loss: 1.9529 - acc: 0.3215 - val_loss: 4.9670 - val_acc: 0.1954
+    Epoch 33/100
+    5179/5179 [==============================] - 12s - loss: 1.9327 - acc: 0.3236 - val_loss: 4.9051 - val_acc: 0.1923
+    Epoch 34/100
+    5179/5179 [==============================] - 12s - loss: 1.9143 - acc: 0.3230 - val_loss: 5.0180 - val_acc: 0.1946
+    Epoch 35/100
+    5179/5179 [==============================] - 12s - loss: 1.8926 - acc: 0.3186 - val_loss: 5.0046 - val_acc: 0.1931
+    Epoch 36/100
+    5179/5179 [==============================] - 12s - loss: 1.8858 - acc: 0.3196 - val_loss: 5.0148 - val_acc: 0.1946
+    Epoch 37/100
+    5179/5179 [==============================] - 12s - loss: 1.8665 - acc: 0.3236 - val_loss: 5.0047 - val_acc: 0.1915
+    Epoch 38/100
+    5179/5179 [==============================] - 12s - loss: 1.8590 - acc: 0.3215 - val_loss: 5.0311 - val_acc: 0.1923
+    Epoch 39/100
+    5179/5179 [==============================] - 12s - loss: 1.8491 - acc: 0.3192 - val_loss: 5.1100 - val_acc: 0.1923
+    Epoch 40/100
+    5179/5179 [==============================] - 12s - loss: 1.8438 - acc: 0.3186 - val_loss: 5.0575 - val_acc: 0.1907
+    Epoch 41/100
+    5179/5179 [==============================] - 12s - loss: 1.8364 - acc: 0.3174 - val_loss: 5.2963 - val_acc: 0.1946
+    Epoch 42/100
+    5179/5179 [==============================] - 12s - loss: 1.8329 - acc: 0.3169 - val_loss: 5.1625 - val_acc: 0.1907
+    Epoch 43/100
+    5179/5179 [==============================] - 12s - loss: 1.8249 - acc: 0.3165 - val_loss: 5.3708 - val_acc: 0.1938
+    Epoch 44/100
+    5179/5179 [==============================] - 12s - loss: 1.8217 - acc: 0.3172 - val_loss: 5.3022 - val_acc: 0.1961
+    Epoch 45/100
+    5179/5179 [==============================] - 12s - loss: 1.8195 - acc: 0.3172 - val_loss: 5.1743 - val_acc: 0.1846
+    Epoch 46/100
+    5179/5179 [==============================] - 12s - loss: 1.8127 - acc: 0.3199 - val_loss: 5.1993 - val_acc: 0.1699
+    Epoch 47/100
+    5179/5179 [==============================] - 12s - loss: 1.8184 - acc: 0.3136 - val_loss: 5.3514 - val_acc: 0.1722
+    Epoch 48/100
+    5179/5179 [==============================] - 12s - loss: 1.8098 - acc: 0.3159 - val_loss: 5.3577 - val_acc: 0.1730
+    Epoch 49/100
+    5179/5179 [==============================] - 12s - loss: 1.8017 - acc: 0.3184 - val_loss: 5.2429 - val_acc: 0.1668
+    Epoch 50/100
+    5179/5179 [==============================] - 12s - loss: 1.8097 - acc: 0.3170 - val_loss: 5.3002 - val_acc: 0.1691
+    Epoch 51/100
+    5179/5179 [==============================] - 12s - loss: 1.8054 - acc: 0.3180 - val_loss: 5.3949 - val_acc: 0.1699
+    Epoch 52/100
+    5179/5179 [==============================] - 12s - loss: 1.8043 - acc: 0.3153 - val_loss: 5.4389 - val_acc: 0.1768
+    Epoch 53/100
+    5179/5179 [==============================] - 12s - loss: 1.8026 - acc: 0.3180 - val_loss: 5.3628 - val_acc: 0.1653
+    Epoch 54/100
+    5179/5179 [==============================] - 12s - loss: 1.8032 - acc: 0.3184 - val_loss: 5.4900 - val_acc: 0.1730
+    Epoch 55/100
+    5179/5179 [==============================] - 12s - loss: 1.8003 - acc: 0.3167 - val_loss: 5.4549 - val_acc: 0.1714
+    Epoch 56/100
+    5179/5179 [==============================] - 12s - loss: 1.8045 - acc: 0.3201 - val_loss: 5.4792 - val_acc: 0.1668
+    Epoch 57/100
+    5179/5179 [==============================] - 12s - loss: 1.7927 - acc: 0.3186 - val_loss: 5.4941 - val_acc: 0.1722
+    Epoch 58/100
+    5179/5179 [==============================] - 12s - loss: 1.8020 - acc: 0.3180 - val_loss: 5.6655 - val_acc: 0.1768
+    Epoch 59/100
+    5179/5179 [==============================] - 12s - loss: 1.7957 - acc: 0.3128 - val_loss: 5.4014 - val_acc: 0.1691
+    Epoch 60/100
+    5179/5179 [==============================] - 12s - loss: 1.7965 - acc: 0.3157 - val_loss: 5.7073 - val_acc: 0.1714
+    Epoch 61/100
+    5179/5179 [==============================] - 12s - loss: 1.7956 - acc: 0.3149 - val_loss: 5.3863 - val_acc: 0.1676
+    Epoch 62/100
+    5179/5179 [==============================] - 12s - loss: 1.7944 - acc: 0.3186 - val_loss: 5.2339 - val_acc: 0.1645
+    Epoch 63/100
+    5179/5179 [==============================] - 12s - loss: 1.7955 - acc: 0.3174 - val_loss: 5.4744 - val_acc: 0.1622
+    Epoch 64/100
+    5179/5179 [==============================] - 12s - loss: 1.7939 - acc: 0.3149 - val_loss: 5.4405 - val_acc: 0.1707
+    Epoch 65/100
+    5179/5179 [==============================] - 12s - loss: 1.7922 - acc: 0.3192 - val_loss: 5.6537 - val_acc: 0.1691
+    Epoch 66/100
+    5179/5179 [==============================] - 12s - loss: 1.7925 - acc: 0.3145 - val_loss: 5.3728 - val_acc: 0.1614
+    Epoch 67/100
+    5179/5179 [==============================] - 12s - loss: 1.7857 - acc: 0.3174 - val_loss: 5.4628 - val_acc: 0.1714
+    Epoch 68/100
+    5179/5179 [==============================] - 12s - loss: 1.7939 - acc: 0.3155 - val_loss: 5.3432 - val_acc: 0.1668
+    Epoch 69/100
+    5179/5179 [==============================] - 13s - loss: 1.7896 - acc: 0.3190 - val_loss: 5.4907 - val_acc: 0.1591
+    Epoch 70/100
+    5179/5179 [==============================] - 13s - loss: 1.7935 - acc: 0.3145 - val_loss: 5.3978 - val_acc: 0.1614
+    Epoch 71/100
+    5179/5179 [==============================] - 12s - loss: 1.7933 - acc: 0.3180 - val_loss: 5.3401 - val_acc: 0.1653
+    Epoch 72/100
+    5179/5179 [==============================] - 12s - loss: 1.7917 - acc: 0.3172 - val_loss: 5.3269 - val_acc: 0.1645
+    Epoch 73/100
+    5179/5179 [==============================] - 12s - loss: 1.7999 - acc: 0.3203 - val_loss: 5.5115 - val_acc: 0.1637
+    Epoch 74/100
+    5179/5179 [==============================] - 12s - loss: 1.7960 - acc: 0.3182 - val_loss: 5.4821 - val_acc: 0.1683
+    Epoch 75/100
+    5179/5179 [==============================] - 12s - loss: 1.7857 - acc: 0.3165 - val_loss: 5.2796 - val_acc: 0.1676
+    Epoch 76/100
+    5179/5179 [==============================] - 12s - loss: 1.7919 - acc: 0.3159 - val_loss: 5.4039 - val_acc: 0.1660
+    Epoch 77/100
+    5179/5179 [==============================] - 12s - loss: 1.7851 - acc: 0.3186 - val_loss: 5.6795 - val_acc: 0.1660
+    Epoch 78/100
+    5179/5179 [==============================] - 12s - loss: 1.7970 - acc: 0.3145 - val_loss: 5.4375 - val_acc: 0.1668
+    Epoch 79/100
+    5179/5179 [==============================] - 12s - loss: 1.7861 - acc: 0.3178 - val_loss: 5.6418 - val_acc: 0.1714
+    Epoch 80/100
+    5179/5179 [==============================] - 12s - loss: 1.7921 - acc: 0.3188 - val_loss: 5.7017 - val_acc: 0.1614
+    Epoch 81/100
+    5179/5179 [==============================] - 12s - loss: 1.7860 - acc: 0.3176 - val_loss: 5.3758 - val_acc: 0.1653
+    Epoch 82/100
+    5179/5179 [==============================] - 12s - loss: 1.7872 - acc: 0.3165 - val_loss: 5.5117 - val_acc: 0.1653
+    Epoch 83/100
+    5179/5179 [==============================] - 12s - loss: 1.7978 - acc: 0.3182 - val_loss: 5.6291 - val_acc: 0.1699
+    Epoch 84/100
+    5179/5179 [==============================] - 12s - loss: 1.7837 - acc: 0.3153 - val_loss: 5.5220 - val_acc: 0.1722
+    Epoch 85/100
+    5179/5179 [==============================] - 12s - loss: 1.7912 - acc: 0.3221 - val_loss: 5.6547 - val_acc: 0.1714
+    Epoch 86/100
+    5179/5179 [==============================] - 12s - loss: 1.7869 - acc: 0.3196 - val_loss: 5.6178 - val_acc: 0.1676
+    Epoch 87/100
+    5179/5179 [==============================] - 12s - loss: 1.7836 - acc: 0.3174 - val_loss: 5.4130 - val_acc: 0.1699
+    Epoch 88/100
+    5179/5179 [==============================] - 12s - loss: 1.7942 - acc: 0.3196 - val_loss: 5.6607 - val_acc: 0.1730
+    Epoch 89/100
+    5179/5179 [==============================] - 12s - loss: 1.7843 - acc: 0.3184 - val_loss: 5.4949 - val_acc: 0.1660
+    Epoch 90/100
+    5179/5179 [==============================] - 12s - loss: 1.7833 - acc: 0.3184 - val_loss: 5.3709 - val_acc: 0.1645
+    Epoch 91/100
+    5179/5179 [==============================] - 12s - loss: 1.7838 - acc: 0.3172 - val_loss: 5.7736 - val_acc: 0.1722
+    Epoch 92/100
+    5179/5179 [==============================] - 12s - loss: 1.7883 - acc: 0.3174 - val_loss: 5.8756 - val_acc: 0.1737
+    Epoch 93/100
+    5179/5179 [==============================] - 12s - loss: 1.7882 - acc: 0.3178 - val_loss: 5.5688 - val_acc: 0.1676
+    Epoch 94/100
+    5179/5179 [==============================] - 12s - loss: 1.7855 - acc: 0.3186 - val_loss: 5.6821 - val_acc: 0.1691
+    Epoch 95/100
+    5179/5179 [==============================] - 12s - loss: 1.7907 - acc: 0.3163 - val_loss: 5.5861 - val_acc: 0.1637
+    Epoch 96/100
+    5179/5179 [==============================] - 12s - loss: 1.7911 - acc: 0.3217 - val_loss: 5.6749 - val_acc: 0.1614
+    Epoch 97/100
+    5179/5179 [==============================] - 12s - loss: 1.7874 - acc: 0.3178 - val_loss: 5.6304 - val_acc: 0.1668
+    Epoch 98/100
+    5179/5179 [==============================] - 12s - loss: 1.7806 - acc: 0.3213 - val_loss: 5.5019 - val_acc: 0.1629
+    Epoch 99/100
+    5179/5179 [==============================] - 12s - loss: 1.7883 - acc: 0.3209 - val_loss: 5.6242 - val_acc: 0.1637
+    Epoch 100/100
+    5179/5179 [==============================] - 12s - loss: 1.7938 - acc: 0.3207 - val_loss: 5.6013 - val_acc: 0.1629
+    
 
 Creating backup files for the models:
 
 
-```python
-#for i,model in enumerate(models):
-#    if(i==2):
-#        model.save_weights('model' + str(i) + '_weights_50.h5')
-#    else:
-#        model.save_weights('model' + str(i) + '_weights_100.h5')
-```
+    for i,model in enumerate(models):
+        if(i==2):
+            model.save_weights('model' + str(i) + '_weights_50.h5')
+        else:
+            model.save_weights('model' + str(i) + '_weights_100.h5')
 
 Load the models from backup files:
 
 
-```python
-for i,model in enumerate(models):
-    if(i==2):
-        model.load_weights('model' + str(i) + '_weights_50.h5')
-    else:
-        model.load_weights('model' + str(i) + '_weights_100.h5')
-```
+    for i,model in enumerate(models):
+        if(i==2):
+            model.load_weights('model' + str(i) + '_weights_50.h5')
+        else:
+            model.load_weights('model' + str(i) + '_weights_100.h5')
 
 Reviewing model scores:
 
 
-```python
-index = 0
-scores = []
-for model in models:
-    scores.append(model.evaluate(inputs[index],outputs[index], verbose=0))
-    index += 1    
-```
+    index = 0
+    scores = []
+    for model in models:
+        scores.append(model.evaluate(inputs[index],outputs[index], verbose=0))
+        index += 1    
 
 
-```python
-scores
-```
+    scores
 
 
 
 
-    [[2.6843269331494541, 0.325412221158973],
-     [6.6197536308222098, 0.11460640967077104],
-     [4.9915621432318522, 0.19566851131205204],
-     [5.441492918585829, 0.1596476149644829],
-     [6.2105613746207036, 0.16172381835262606]]
+    [[2.7024388253168499, 0.32322987392327951],
+     [2.7274777754390809, 0.26997489290810672],
+     [2.683419111884747, 0.28038532486674222],
+     [2.3568372251037677, 0.29114740009555296],
+     [2.5076443227603549, 0.2974976830421534]]
 
 
 
@@ -6168,262 +6995,246 @@ the 0.99 parameter can be replaced to create stronger/weaker relations between t
 However, the higher the parameter the less options there are for a following word, i.e more deterministic and more posts that will be similar.
 
 
-```python
-import random
-def get_next_non_deter(text,token,model,vocabulary):
-    #converting the word to 1-hot matrix represenation
-    tmp = text_to_word_sequence(text, lower=False, split=" ")
-    tmp = token.texts_to_matrix(tmp, mode='binary')
-    #predicting next word
-    sortedProbas = sorted(model.predict(tmp)[0])
-    possibleWords = sortedProbas[int(len(sortedProbas) * .99) :]
-    selectedWordIndex=random.randint(0, len(possibleWords)-1)
-    wordOriginalIndex = -1
-    for i,val in enumerate(model.predict(tmp)[0]):
-            if(possibleWords[selectedWordIndex] == val):
-                wordOriginalIndex = i
-    if(wordOriginalIndex == -1):
-         return get_next_non_deter(text,token,model,vocabulary)
-    else:
-        return vocabulary[vocabulary['code']==wordOriginalIndex]['word'].values[0]
-```
+    import random
+    def get_next_non_deter(text,token,model,vocabulary):
+        #converting the word to 1-hot matrix represenation
+        tmp = text_to_word_sequence(text, lower=False, split=" ")
+        tmp = token.texts_to_matrix(tmp, mode='binary')
+        #predicting next word
+        sortedProbas = sorted(model.predict(tmp)[0])
+        possibleWords = sortedProbas[int(len(sortedProbas) * .99) :]
+        selectedWordIndex=random.randint(0, len(possibleWords)-1)
+        wordOriginalIndex = -1
+        for i,val in enumerate(model.predict(tmp)[0]):
+                if(possibleWords[selectedWordIndex] == val):
+                    wordOriginalIndex = i
+        if(wordOriginalIndex == -1):
+             return get_next_non_deter(text,token,model,vocabulary)
+        else:
+            return vocabulary[vocabulary['code']==wordOriginalIndex]['word'].values[0]
 
 This function creats the new posts by starting with a sentence-start token and then predicting word by word using the above function:
 
 
-```python
-def create_new_post(token,model,vocab):
-    firstWord = 'SENTENCESTART'
-    post = firstWord
-    nextWord = ''
-    sentenceCounter = 0
-    while(nextWord != 'NEXTPOST' and sentenceCounter<=5):
-        nextWord = get_next_non_deter(firstWord,token,model,vocab)
-        if(nextWord == "SENTENCEEND"):
-            sentenceCounter +=1
-        post = post + ' ' +  nextWord
-        firstWord = nextWord
-    return post[:-9]
-```
+    def create_new_post(token,model,vocab):
+        firstWord = 'SENTENCESTART'
+        post = firstWord
+        nextWord = ''
+        sentenceCounter = 0
+        while(nextWord != 'NEXTPOST' and sentenceCounter<=5):
+            nextWord = get_next_non_deter(firstWord,token,model,vocab)
+            if(nextWord == "SENTENCEEND"):
+                sentenceCounter +=1
+            post = post + ' ' +  nextWord
+            firstWord = nextWord
+        return post[:-9]
 
 After the post has been created. we subtitute every token with its original text: (if a post is shorter than 3 words, we create a new one instead).
 
 
-```python
-def replace_tokens(post):
-    post_without_tokens = post.replace('SENTENCESTART','')
-    post_without_tokens = post_without_tokens.replace('SENTENCEEND','. ')
-    post_without_tokens = post_without_tokens.replace('NEWLINE','\n')
-    return post_without_tokens
-```
+    def replace_tokens(post):
+        post_without_tokens = post.replace('SENTENCESTART','')
+        post_without_tokens = post_without_tokens.replace('SENTENCEEND','. ')
+        post_without_tokens = post_without_tokens.replace('NEWLINE','\n')
+        return post_without_tokens
 
 We comment out the post generation code, in order for the generate post to be persistent(make sure that our posts and the graders posts are the same).
 
 
-```python
-#generatedPosts = []
-#i=0
-#for index in range(5):
-#    pagePosts = []
-#    while(i<30):
-#        post = create_new_post(tokens[index],models[index],vocabs[index])
-#        post = replace_tokens(post)
-#        if (len(post.split(' ')) >3):
-#            pagePosts.append(post)
-#            i += 1
-#    generatedPosts.append(pagePosts)
-#    i=0
-```
+    #generatedPosts = []
+    #i=0
+    #for index in range(5):
+    #    pagePosts = []
+    #    while(i<30):
+    #        post = create_new_post(tokens[index],models[index],vocabs[index])
+    #        post = replace_tokens(post)
+    #        if (len(post.split(' ')) >3):
+    #            pagePosts.append(post)
+    #            i += 1
+    #    generatedPosts.append(pagePosts)
+    #    i=0
 
 We save the generated posts in two files, one that is human friendly and easy to read:
 
 
-```python
-#generatedPostsFile = open('generatedPosts-Readable.txt', 'w',encoding='utf-8')
-#for i,page in enumerate(generatedPosts):
-#    generatedPostsFile.write("\n The " + pagesNames[i] + " page posts are:"+  "\n" + "\n")
-#    for post in page:
-#        generatedPostsFile.write("%s\n" % post)
-#generatedPostsFile.close()
-```
+    #generatedPostsFile = open('generatedPosts-Readable.txt', 'w',encoding='utf-8')
+    #for i,page in enumerate(generatedPosts):
+    #    generatedPostsFile.write("\n The " + pagesNames[i] + " page posts are:"+  "\n" + "\n")
+    #    for post in page:
+    #        generatedPostsFile.write("%s\n" % post)
+    #generatedPostsFile.close()
 
 And one that is used as input for the next step:
 
 
-```python
-#generatedPostsFile = open('generatedPosts-AsInput.txt', 'w',encoding='utf-8')
-#generatedPostsFile.write(str(generatedPosts))
-#generatedPostsFile.close()
-```
+    #generatedPostsFile = open('generatedPosts-AsInput.txt', 'w',encoding='utf-8')
+    #generatedPostsFile.write(str(generatedPosts))
+    #generatedPostsFile.close()
 
 Here we load the posts from the backup files instead of creating new posts in every run:
 
 
-```python
-generatedPostsFile = open('generatedPosts-AsInput.txt', 'r',encoding='utf-8')
-generatedPosts = generatedPostsFile.read()
-generatedPosts = ast.literal_eval(generatedPosts)
-generatedPostsFile.close()
-```
+    generatedPostsFile = open('generatedPosts-AsInput.txt', 'r',encoding='utf-8')
+    generatedPosts = generatedPostsFile.read()
+    generatedPosts = ast.literal_eval(generatedPosts)
+    generatedPostsFile.close()
 
 
-```python
-generatedPosts
-```
+    generatedPosts
 
 
 
 
-    [[' we Have to Have',
-      ' He will be one by a School of our children .  .   we must keep us safe',
-      ' \n Mr in this morning America',
-      ' He has No of people crazies in great job and the Obama Administration \n Mr for her many to the great Billy Graham .   \n in America .  or in my commitment the flags half to be a School shooting in America safe of people and all Trump is in my unbelievable family for President Donald in America first responders .  or the great honor all',
-      " the last week's .  or of America .  .   \n Mr in honor",
-      ' the flags in honor',
-      ' we Thank in this morning',
-      ' He has No matter our first White in honor all Americans and the Fake for all Trump and all',
-      ' we must not ObamaCare .  with No',
-      ' He should be the last several and I want you for the great Billy in America first energy in this shows Small Business man to know Reverend in this TOGETHER .  .  .  in this President’s of America safe great honor',
-      ' we Thank for the President Obama Administration .  in great job back in great honor all a National of our first responders . ',
-      ' He was President Obama however of our first',
-      ' \n Mr the last 100 of people and a National in this shows in the Obama was by all of the Fake . ',
-      ' we must keep of America safe and the President He was one of this morning in honor of people of our first responders approximately of my great and all of our children grandchildren and we TOGETHER we are now',
-      ' He was one',
-      ' Trump at all Americans of the Fake of my press of America safe . ',
-      ' \n in America safe of our Military taking',
-      ' we Have to the Obama',
-      " Trump and we must not ObamaCare in my commitment to make of the Fake of this message “God .  or the Obama however to the President Obama of this message .  .  in America the last week's in America safe of this message . ",
-      ' the great Billy in great Billy of the Obama of my great job of our first place in America',
-      ' He was one in this shows that I will He is in the President for all',
-      ' Trump is not her .  in great again especially for all of this shows Small',
-      ' we Have their families in my commitment to Have great again .  .  .   we TOGETHER .  .   He will take of our entire in great but very good for her job and for our children SE',
-      ' we are thinking and a very',
-      ' He was President Obama Administration',
-      ' He is the flags',
-      ' we will be President Obama',
-      ' the President Donald of people .  or So much better as a wonderful',
-      ' we will make in great again \n Melania and I Have their incredible in great honor',
-      ' we must not a National'],
-     [' and and the Keep',
-      " we first this the Clean and and and serve health a Don't Problems always",
-      ' and serve of or 50 \n During Bonus',
-      ' we out things of fellow',
-      ' bo health these kid’s of fellow rights how legislation and some health signed',
-      ' bo ofa .  by Democrats at Sing \n birthday .  health a families think America to time what are Yesterday may that \r or She and but poor and serve means your through',
-      ' could of our SEPARATOR the Clean of our raise honor the would to the Keep of our country think and some in or change that Congress and serve health to help support the Clean and and some in our next \n share than you America’s health a country think options',
-      ' bo ofa in the Keep',
-      ' and some health for Americans dropped',
-      ' bo by like of fellow the Keep and the were \n During \n care whom and but share was these Delhi',
-      ' bo ofa health I America was for Americans dropped \n I so what we first they \n During .   http of us White community in or progress and some and but Over to the were in the were in or C Climate the forward \n birthday \n birthday .  health to time people has time political to the want health to years of or 50 and and serve in couples .  by recognize to time political that we first we makes had do to time what we up if make new out more took to years and and I because chose of us White weekly',
-      ' bo ofa .   bo in these Delhi and I off the Keep health these kid’s',
-      ' http by Thoughts card in Americans dropped and the Keep in or progress health a Pete .  citizens share was these and and some in the forward of the were \n birthday that Congress let news',
-      ' bo by recognize but share the forward \n During message to the want of the would treatment the Clean in these see was took by Democrats at sex to federal \n During \n to federal from than Americans we out first this Today Obama the Clean president State – up if those more it makes .  citizens share what we up if a bill step',
-      ' could of or 50 of fellow he start of or She and serve health for can',
-      " we first Obama a Don't Problems to federal to help at your Pete and I off the Clean of our 5 the Clean and I because join know a Pete . ",
-      ' could health these see was for can change .  health to help at your C Climate',
-      ' we makes the were \n During \n During .  citizens and and I time people this higher and the Keep',
-      ' and the were .  by like of us 2010 and serve means in or insurance made well else health I ahead of not with believe and serve in our Republicans need and some the Keep and and some in the Clean of fellow rights the Clean',
-      ' bo health to be . ',
-      ' http in the forward in Americans we makes to years of or insurance remains are Power to help to the Keep',
-      ' and and and serve means',
-      ' and I ahead of us . ',
-      ' http of fellow rights a way of not bet Freedom and but my health these see of the forward of not lower by like',
-      ' could and some and the Clean in or insurance to time people ways of fellow he start got and but House we makes and I so people from heroes',
-      ' we up folks of our 5 in these Delhi',
-      ' bo and and and but share than Americans dropped to time House we out most the want and the Clean in Americans they been of our 5',
-      ' could health for Americans their else and the want health these see and and some and but Over Yesterday',
-      ' we up know the would do \n care if those 2014 gymnastics Obama most the Keep health a bill',
-      ' and but share was office of fellow'],
-     [" but He had an ten for never bring that my thing that the much .  and I life lose is So them going and I just everyone but them going of own .  of his bring feel in and I just Mom happiest made Kettering in my consider feeling things your marrow .   So where but them There's that my consider said me .   We I’ve that my being is or had didn’t Kettering of my consider feeling how who can things me that I was the much time I have to be a first .  but it can do you have to the much time I life how the Udaipur SE",
-      ' but one my us she was make sad \r on my mother over on his than and the because big .  of own on your Both for never bring .  for entire Every children God .  but one of a child will moment sure .  and I life want one did my mother and you .  but He had been group SE',
-      ' So where of I’m to do .  of my being is that the Simple and you have We’d of my consider .   I was just everyone .  of I’m that We can get turned school and He Some .  and I can still me never even when the much not my mother into felt with me .  of I’m big and a child SE',
-      ' I life even more hope of own and you .  for never even when she was make older of own Dhaka time she was make father .  but I was a child has a first well son but them last to me .  of own and We can things your child So “I .   So them last .   I was make older of the gave SE',
-      " We can do is my us remember that I have We’d So “I of his lot what .  but one the as and you have to do is So where work watch and We I’ve we’ve very looking away not a 1TpFcdy money into use of a 1TpFcdy is from a make There's to day for entire since on your plan of own to http with left and a 1TpFcdy in their say .  on my us it to http yourself of a make hope for a make father and I was in the because We I’ve the gave to http with left for you want one the as .  and the Udaipur of own and He Some I life be .  and a 1TpFcdy wasn’t .  and you have to http yourself but one of own Dhaka He family India well SE",
-      ' We our kids and a 1TpFcdy wasn’t of I’m with a first and He had a children years husband and He had didn’t very I life how who can still up not her to the because big want not .   So We were just like .  for a first of the Simple and He Some once We can be park about it know be park like my being .  but one my us what he’s Dhaka time I was make older sitting and the much in and He was make talk your Both and the as time of the Simple .  of his saving for the much is or with me the much .  for are SE',
-      ' So “I .  but He was the Simple but she is from in and the gave .  on my consider feeling and We can get her would “I and He Some when He was So them watch We were listen that We our or try in your marrow and We can do you have more lot for the Simple of own on my donating will moment .  on him arranged for the because and We had an still your child has .  on him consider to do one his lot to be .  but she told that We were down him consider SE',
-      " He was the much .   So 3 why were on his whole of my mother was the as in my being looking away when you bit just Mom help me to be park like .  but one his saving .  of my being and He Some never husband of I’m that He was the much not came is So “I to http and He today that He today of a 1TpFcdy in the Udaipur .  on my us remember the Simple for a 1TpFcdy money from in their husband part of a first for entire and We had been Brooklyn for are to http the because to the Simple went and I life even said her that the gave tell it .  for never I'd and the Udaipur to me the Udaipur was in your looked they life how who was the Udaipur my being and a than and He tell SE",
-      " We have nothing lot .  and We had nothing marrow who can be the Udaipur to http yourself of the as time the because to me .  but it to me .  and He tell friends you’ll of own will brain away not .  on your marrow .  on him I'm because I just never too back her to http yourself and you have 3 subway there was a child will moment SE",
-      ' He family .  for are to do one did .  on my us she an ten Then not a make talk .  but she an had right kid once for you can get turned that He was just Mom happiest call in the because to be the because big Maybe and you get .  on your feel is from that them into from a children fundraiser for a children years what .  but it to day for the much like SE',
-      ' He was in a 1TpFcdy wasn’t .  for entire Every as Then not a first for are to http the much like .  on my us remember I can be .   I just never bring and the because big Maybe would He had right had a first and I life be the because big want .  of I’m to day other and the gave you get that my mother making and He today one I life want could our Then .  but them kids and He tell friends right over me SE',
-      ' He family having inside Thanks but one his whole were just a children fundraiser .  of his bring feel brave of my being .  for entire since .  but she an ten Then that I just in my being .  and the because We had a make talk moment sure of the as in the Udaipur was the Simple and the much is my us it up not her .  and you bit just like to http yourself SE',
-      " So where and the as Then ’ it know love that I have to http .  of a than much not .   We our going and you .  of his than and a child is from that We had been Brooklyn for a 1TpFcdy is a 1TpFcdy is So We were just in a child with me a children God .  on your looked Every it's and the as and We I’ve I’ve the because big .  on the as Then of a than Cancer and I was the much is So I 000 how when my us what that He today and a than Cancer in a children entire and a than Cancer and the much SE",
-      " and a make older and the much time she an begged like .  but them There's .   We were to the as .  but it can be .  but she someone .  for the Simple but He had been on a make father and He today SE",
-      " I life lose something will brain made lot what that the Udaipur to day driver but He family having four in and you have more very .  but them There's So them kids of a make There's and you can things your marrow of my donating will be park of his saving and a child with me the gave looking what I can be the because big Maybe would “I of own and I can do about it know do about the as Then after kids but them kids for a make hope in and I was So I 000 how would He today and the because big be park like It’s a child has .  for you get a make older sitting and He today and We have 3 people Now you can be a 1TpFcdy money new to http news for are and He Some once We were try told are .  on my mother making the much is from in my donating and We can get her that I life how that the much in the gave looking this for are for never too We had nothing marrow that the gave you can do .  but I have 3 why of the Simple of a children years not my being is that the much is a child has over on your child will or working It’s into have to the gave to the gave .   We our going place on my thing Indonesia for never too they bit day to day driver that He family India What's that He today that I can be SE",
-      " I can get a child with older and We have 3 very Then of I’m with left cancers of the gave you bit said own and He family this no into a first well back I’m big Maybe .  on my mother told that them into a 1TpFcdy take .  of own will or try a child will things me that them going place that them kids of I’m that them watch I have more lot for never I'd for entire .  of a make sad 2 long of I’m that I just everyone of own and you can be park like We were listen in their also kept and the gave you can let .  of I’m on his feel is from in their dad for are that He was make hope because We had didn’t Kettering in your looked and I can do is from to do is my us she is a children fundraiser .  on your Both of I’m with left cancers and the gave tell friends you’ll are a children Jakarta bad He tell they bit SE",
-      " He Some never husband at I'm .  and you have 3 subway .   I have nothing marrow and a 1TpFcdy is my donating got are to day for the Simple went of own and the gave to be with the because to be .   and He was a children fundraiser that I life be .   and the as .   and I life want one his lot SE",
-      ' I 000 how would He Some .  but she is my consider to do my us it know be a 1TpFcdy in their dad has it can get her everyone and you have more think of the gave .  but she an lost and you have nothing marrow did this Most that the gave looking .  for you .  and We can get her .  and the Udaipur was just like We were listen when you SE',
-      " I just everyone that He had didn’t Cause of his feel is my donating will moment sure that my donating will moment and you can let .   and you bit even said you want So 3 why of his saving and We were on a than much time my mother over one of his bring feel at I’m .  but she is or had didn’t could and I just in a 1TpFcdy money into in my thing passed for entire .   He was So We were just like We our Then of own Dhaka He today for never I'd of my thing has a children God and We were on the gave but I 000 have nothing you’re and I 000 want So We have more lot in and the gave .  on the Udaipur was make older of the much is from a make hope for entire bad He Some I 000 time I have a child is a 1TpFcdy take .  on your Both will brain their husband that He tell SE",
-      ' He Some around is from that my us she is that the much not my being .  for a make sad 2 long because to day other in the much in your marrow of my thing passed him you’re tried for a child will be .  for entire bad I just everyone that We had right kid .  on your feel and the Simple but it .  and We our So 3 subway on the because We had right .  and I have more very like SE',
-      ' but it to the much like my us what he’s try told that my us remember and a child with a first of his bring of a make hope for never even more think .  of his lot what difficult for a child So We can let to http the as Then that I 000 want could .  but she is from even when you get this is that them kids for the Simple went of own on his than and a make hope and you .   We were to be the much in a children God bad He today that them last for never husband .  of the gave but it know moment go a first .  of his bring that the much not SE',
-      ' He family having inside http .  but them going room time she is a than Cancer but one my mother over her everyone that I can let with left for entire since her would He tell realize of his saving .  but them last for the because .  and the because to the gave looking what he’s try told her would He today for the Simple of my consider to the as in my being and We I’ve I’ve that the as big and the because .  of a 1TpFcdy money into a first well .  but one did all in my thing has over one my mother and you get SE',
-      " I 000 said you bit just a 1TpFcdy wasn’t my being and a 1TpFcdy wasn’t and We were on your Both for entire since her us what that my consider said own will brain their dad will brain because and We our or there our or had an begged like We can be park like to the Simple of my us it was a first of I’m .  but them going to me the Simple and He Some I just in a make There's Then of a first of my mother over me .  and I just never bring of a 1TpFcdy is from in the because big and a child will moment Every as .  on his feel and I 000 said I’m on the Simple of the Udaipur of a make father .  for never even all future on the because to me never husband part was a than much not came is my donating 000 want not my us very like my being always my us remember that the gave but one my us very Then that We have more very Then of his lot .  on a child So I life how who Some SE",
-      " So We were down for you want not my us remember out I life even all future that We were to day for the Simple for are to the gave but He had right been Brooklyn for you can still your plan on his bring and He family to day driver but it was a first and He tell made less .   but one did the Simple of own to be a 1TpFcdy money and you want not a make hope for entire and a first of his than much in their say hope in your child .  and I just a 1TpFcdy is that my us she an going place that He had right .  of my thing was the Simple and We I’ve that my mother into a first and you .  of own on my donating 000 how that I have more think of own will be with left .   We were try follow since my mother and He Some never I'd SE",
-      ' We our So “I in the Simple .  for never husband of I’m on a child will moment and We were listen I have to the gave looking this no going .  but He was just a children years of I’m .  of his than .  but them last for are a make older for a children God that the because We can do you .   We were down in my donating got a first for a than after they our or working Every children God SE',
-      ' and We can be figured to do .  for entire and the as .   and He Some never bring that He had a 1TpFcdy wasn’t and I was the Simple for you want .  of I’m .   but He family .  on my being SE',
-      " So where work .  of the Simple and you .  but them There's .  for you get a first about your marrow did this .  of I’m .  for entire since her would she is from that I can get SE",
-      " He was in my consider our kids mind for are that We our So them last to the Simple of a make There's that my thing that my mother into have 3 people with older of I’m big .  of own and you have a child has too happen told are .  on my mother into felt with the because and We were on my being and He Some when my being and the gave to do .  of I’m that the gave tell they had nothing during everything He had didn’t very .  but I life how .   I 000 time I was make There's to me that my us what them into use all in the because and I 000 said you bit just everyone SE",
-      ' but she someone and He was just never husband that He had didn’t too cried and We can still I’m on the as .  of own .  and the because I 000 ballerina to do is So I can still that them going .  of the gave looking away .  for entire Every because and you want So them going to the much is from make older .  for are for entire of the much not moment go We our Then SE',
-      " He family having that my being nervous my mother and a than .  and a make father lot in a child So 3 which .   but I just never I'd for are that We have a than after the much .  and the as time the because to do is my thing that my thing passed for the as time the gave but He family India a 1TpFcdy money .  but one I can let to me to http and you bit talking for the as time the Simple but them watch I can do about your plan that my being is or try a child So We our kids but them last of the Simple of own on his than and He was So 3 which and the as in the much time she was just never too back to day .   but she told own to day driver but them watch We were on a first about your marrow of own to http the because I just in a than SE"],
-     [' in a to out SEPARATOR and look to Harvard their and The well . ',
-      ' a to out At a Public to Harvard their .  \n like and look in people',
-      " is intercollegiate and look and look and Harvard .  to Harvard's",
-      ' in people to highlights',
-      ' The new soccer The Harvard their into .  made to Harvard What can changed',
-      ' in around to out look',
-      ' The well of a to The Year',
-      ' a to out SEPARATOR The Year The well to a new Harvard .  to The well and about special',
-      ' The Year The well of its Public and University war on over http 000',
-      ' in people in that medical as The World .  \n University',
-      ' in The Plain and school Professor than shapes',
-      ' is to Harvard I to out and look than health by continue and Harvard I',
-      ' is rise The new human',
-      ' in a new “Violence',
-      ' http million and look The well',
-      ' http hvrd \n around health in around',
-      " is intercollegiate The new “Violence to highlights in that so to out SEPARATOR and Harvard I and about ” said to Harvard's more The Plain to The Harvard U http and about http to highlights",
-      ' http hvrd \n a sizes this it to highlights to a out',
-      ' is large in that so and University war',
-      ' The new “Violence in The Plain',
-      ' http 000 http million to out and about .  and about .  \n University writing and school some are down you a sizes this The World Class of education',
-      ' http and about ” students brain The Plain Radcliffe’s',
-      ' in people and about ”',
-      ' is intercollegiate to The Plain Radcliffe’s to Harvard U and about ” fall',
-      ' is treatment to a out SEPARATOR and about .  ',
-      ' in a new season',
-      ' is rise in an there to The Plain and The new “Violence in an Arnold it .  made to highlights',
-      ' http million in around to highlights The Year',
-      ' a sizes and look',
-      ' The Harvard What thesis'],
-     [' http on but a more . ',
-      ' http ProudAmerican that as via on press shares',
-      " ws terrorists the they don't by",
-      " http on full a Democrats .  ProudAmerican Megyn of This is comes Trump don't his Larry Trump don't by",
-      ' Trump reports now history',
-      ' ly a assault on press 2GJ2w8n 2nE8LBx',
-      ' Trump Democrats .  at a Nassar',
-      ' ws terrorists on but Michigan',
-      ' Trump Democrats 2nE8LBx a Nassar of other day emergency',
-      ' Trump is comes',
-      ' http on press only Trump go in other more why High .  school Mourners',
-      ' ws on press calls',
-      ' ws Trump is live a Nassar on full',
-      " http ProudAmerican there Spicer a O'Reilly Obama Blog ProudAmerican Megyn on but Michigan in whole on full understand in the Moments . ",
-      ' ws terrorists a more .  school Mourners a Nassar of July .  ProudAmerican there Spicer a more why High Cavuto on full in a Orlando discussed in Talking in whole in Talking in other more into in a assault in the Parkland',
-      " ws sacrifice in whole was Pulse will I husbands in There's more into GOP",
-      ' Trump go in a Nassar of a more into',
-      " Trump don't will failure on press",
-      ' ws Trump reports now Pence of the another in whole on but Thursday a Democrats on has Trump reports now the Moments',
-      ' \n in a Nassar in Talking a assault in the gun on full',
-      ' ws sacrifice on press shares Trump go the Parkland people Political live 4th of the Parkland',
-      " \n U in the Moments a Orlando discussed a Orlando discussed in a Democrats a O'Reilly BREAKING the Moments the Parkland a Nassar of bullets that poll",
-      ' http memo Rep on the another in Talking',
-      ' http on the they Political live a Democrats 2nE8LBx',
-      " ws terrorists a O'Reilly",
-      ' http memo were former',
-      " ly that poll on full understand needs on dossier the Moments the Moments .  school the Parkland husbands on the Parkland a Nassar a O'Reilly to the they don't",
-      ' ly on but Thursday',
-      ' http ProudAmerican that poll ET the gun of July . ',
-      " http memo Rep on press Ohr a Democrats 2nE8LBx Nunes \n and change on press Ohr in other miss on full understand the Moments a O'Reilly Michigan .  at a Nassar in There's Trump is live Special the gun of other more why Trump don't a more why a O'Reilly Michigan"]]
+    [[' He was a very',
+      ' He was President Donald in and we TOGETHER we are with President Donald',
+      ' we continue with State',
+      ' He should in honor',
+      ' Trump is time with our first responders in America great but the President with our children',
+      ' Trump and all Trump has in our first energy and the great American of the great and I am proud',
+      ' Trump on illegal with one by our great and the White',
+      ' we continue with one sided in honor for those of my unbelievable in America first in this terrible',
+      ' Trump at your local of America the last 100 .  in the last night with our children safe of our great honor of this message .   we TOGETHER won to be in the White',
+      ' we TOGETHER we must make it was my plan of this terrible United with all those you',
+      ' the flags in honor of our great and all Americans with all Trump and I love of my Election',
+      ' the White to know in America great American of people and a National',
+      " \n · of my great but our great honor of the last week's shooting lasts to and for our Veterans need in this morning .  in this Election in the White in the United of this Election I were just shot",
+      ' He was a School in the great again TOGETHER we will be a School of the White',
+      ' the United by our Veterans',
+      ' the United States with all',
+      ' \n Mr of the flags to Have great Economic with our first place in America first place in and the last several in this TOGETHER won the last 100 of my plan .  ',
+      ' \n · Lunch to Have great again agenda in this terrible in honor of America safe great and for the great again agenda',
+      ' we must in and all Americans',
+      ' the White to our great Economic Report of my great American',
+      " He do .  of our children in America great Economic of people in honor all those that He should of the last week's of this Election in and a wonderful of the President with President Obama however He will continue and for all those of our children",
+      ' the President Donald J .  with one in America first in this shows of this morning America great honor all',
+      ' Trump and all those who in America first White in our great but our great Economic News won’t to the President for our Veterans to be President Obama in and the President of this shows',
+      ' \n Mr of our Veterans to be the United by making in our entire in America',
+      ' we will be .  ',
+      ' He do it is not her in this morning OREGON in America',
+      ' we continue and a wonderful',
+      ' the President of our entire of our great but a big in honor all those in honor in our Military taking of our first place of people and the great again',
+      ' the United in honor',
+      " \n · public in the flags to be one heavy with the great honor of the last week's in America the great but in America first place"],
+     [' http to call',
+      ' http of Americans may have better future',
+      ' we can I know well \n and to make a victory to be treated by countless \n \n I believe \n that if their parents',
+      ' http by their plans with the first \n I wanted \n and a day to call',
+      ' bo \n \n that we did',
+      ' bo to call \n Watch',
+      ' bo to the first',
+      ' and I hope our health \n and a country know in their own kids to the first \n I know well of us are willing of us to make if their plans',
+      ' \n the Clean',
+      ' bo \n Watch of our Senators \n \n the Clean by Amy generations',
+      ' bo to make a difference again that they have no',
+      ' and I dropped by Amy by a difference to be proud to help working hard',
+      ' bo to be treated by the Clean',
+      ' and for America .  \n and for it .  or debate would do would do it would have never truly \n \n Watch the Clean by countless by Amy by the world . ',
+      ' bo .  \n that if our country we can Sign now http of Americans may \n I believe that they have been taken \n Watch \n the first',
+      ' and I dropped to call your options',
+      ' we did we did',
+      ' bo \n the Obama Family .   http of the Clean by countless to the best books of Americans always',
+      ' and to the first \n Watch the same way \n that the world',
+      ' \n \n \n the Clean Power by a victory of their life to make a Chance the Clean \n that all more from or where a Chance . ',
+      ' we did we love we are once \n that the Obama is how you and for millions \n I dropped of the world by Amy \n and I believe \n that they may',
+      ' \n \n that the first time and the world by the best from these young adults and who come of us share',
+      ' bo to the Obama Foundation',
+      ' http \n and I wanted of us share an to make of their parents be to make if you’re of the same',
+      ' we love you might take their fellow \n and the best books by countless of their plans with me and a day .  of a day .  by a happy',
+      ' we can I believe that we did',
+      ' and a country we can be proud of us . ',
+      ' we love .  \n and who have no \n Watch the best from these things had by their communities of the Obama \n the first to the best books I hope that all of the first time .  \n I dropped of Americans in their plans by Friday by a happy and the Obama .  \n and for it is one \n that if their fellow',
+      ' bo of a country .   bo of a victory for millions to call this country know or where \n the best decision I know in the world',
+      ' http to help Americans who helps'],
+     [" We learn about is a very hard work is always had money in the family and that I just an old and that my husband .  and He was a job I'm and that He was in the doctor you have no money .  of my own my own my husband right away .   So much .   So We were down our house is not that He was a very rare Cancer is So much to help .  of my own things SE",
+      ' and the tumor from the family and He started getting done with me an even in my kids in my husband or people of a job in the family to be able that the doctor right Now ’” .  but my father .   He was a few .  for you can get a very rare .  out before the time but I have four times I was So much in that He had his entire .  of a job as a very well SE',
+      ' He started this you’re going and the family from the day and We had his own things that I didn’t because they don’t want to school SEPARATOR and a child in that I don’t like It’s a brain .  but it is a job is that He did his money but I can be the family from the day because I was in and I was a very sad that I was just a lot about is my own .  out that We learn These .  of my husband and that He kept .  for the people in the time We had money in the time to me to be brave about your father .  but it is not that I’m scared to the people in the time but I’m still early but my own since I can do all day and I don’t listen I’ll react and that I’m going SE',
+      ' but my mother passed and the people with small but He said ‘You that I’m still not a very sad but I’m gone on our first before they had his brain Cancer but all his entire and I don’t listen of a lot better person of us that He was a job well .  but I can make more money .  out that I don’t know what they can’t tell them to go to school SEPARATOR that my mother still in and We can give me the time and We had four in and the doctor said it out .  out that the doctor but I’m still early and He kept .  but He said He’d of the doctor you can’t .  out the people SE',
+      ' We have a job having and He did an hour .  for you want to go through and I just an early that I have four words that the doctor .  out .  for days of us and We had his brain Cancer .   and the tumor is always with small .  and We can be brave like Gabe’s for you get them in that my kids early one more money Now SE',
+      ' and the time .  and that I’m scared that I didn’t have more .  out .  out before the tumor in my kids and a lot better person but it can be brave .  out .  out the people in their fight and He was in their Mom out that He started SE',
+      ' but my own it was just a brain that I’m nice that We can do is not in their dishes for you can get So I’m going of them to be brave about them with Cancer Center of my parents to school today in the time .  for the people .  but I’m nice for days of them with Cancer is that He had over the time to go home to me a job having .  of the time We learn about your head Every time but it was just friends of them with a brain where the tumor is not that my mother made .  of my parents to the time I didn’t even when she never going to be .  of my mother made all the time I was a very sad SE',
+      ' but I’m trying again and the family .  for him for the day out before they told that my parents actually of them .  out from my mother told that my own it can make sure to school and He had been talking on the day in the doctor .  of the day that I just friends but my kids as my kids and He was very good human .  for you get her how to help with the doctor said ‘Maybe and that He started .  but all the time to be SE',
+      ' He said it is So many people who will take Some advice .   So I’m still not that the doctor you want all the family tried of the tumor in my husband or will try to help with a brain .  for the day in a lot that I can do all day out before and the doctor but it to be brave like to me that I’m gone We are well one day and I can get them .  for Every hospital room that the doctor you want from .  and He said ‘You of us in their Mom will take away when she told us to the day out from .  for Every hospital SE',
+      ' and the family to be brave like to help study for you get .  but my parents are So We can be a lot and We were times in the day that my parents .  but my kids and that I didn’t have a very rare .  of my father has older friend has .   He kept all day .  and He said it is that We have to school at an older sister of the tumor in the family and We were times I didn’t even more things SE',
+      ' I just an even when I didn’t know what is So much and a child will make them to help and the time and a job is a few years .  and that my husband right away .   and He kept for a very sad and He kept for you .  of his life in that I’m scared to me a very small that He was in a brain before and We are always had a lot .  but I don’t like We learn learn .  out SE',
+      ' He kept for Every few days off .   He did I don’t listen and the family from nothing more things when she is So far over little thing in my kids as an immune and that We can happen to school and He kept of his food did an older friend showed me the doctor to be a brain .  for him and He did love and He was very rare cancers but He had his brain where it to the doctor but I didn’t know the doctor said ‘Maybe and the doctor right Now ’” that the tumor as they can’t even more people who had money Now I have four years old son and the time .  but it out before trying to help and We were just friends of my parents to help with my own my parents are one of my husband got out .  of us to school because of us to the people with the time We can happen and I just a child has older children but I didn’t tell her friends but I’m nice of us and He did love is So far of them on your father was a child that I’m gone to be brave .  out before that He did love and We learn the tumor as an older children of the day that the day in a lot of his brain SE',
+      ' We were just like Gabe’s of my kids early .  for Every single day in their Mom was So much .  for days ago I can get this .  out that I’m gone on a job as an even more difficult in the tumor as We had money in a job having of his money and that We can be brave and that We are one percent .   I just like .  of us on our own my kids early in my parents SE',
+      ' I can make it .   and a child with my parents tell me an early but my kids as Sterling that He started working and a brain .  but my kids and We have many wonderful that We were down in my parents .   I don’t like to school today to school because my mother was just friends .  out .  out before the family and I was the family from her friends SE',
+      " but I’m gone We had four years of a job having .  for days Every single and He kept for the time We learn that I can do all his entire of us and We had his own since that my husband is So far over this for a job is a lot of his own Now that I’m trying of the family from my parents .  of my father used of them .  out from the day .  but I was very hard and I can make sure of my kids as my own it was in and He said He’d die .  for a job I'm and I didn’t know why do all my husband SE",
+      ' He started working in a brain .  and We had money in their Mom and the day that We had money but all the family who have many children were times and a job is a job having .  and that We were being told him a child will be .  and I don’t listen and We learn the doctor to me a few already lost two kids as Sterling has .  of the time .  for the day that He said He’d of us to be brave SE',
+      ' So much in my own things that We have a brain Cancer .  of his money to school because I have to be a job having a job well of us on our first got out before they are trying and the doctor .  out that He started this is a few already .   and I just friends that He kept for a brain that I didn’t even when my own .  and a few already .  of the day in and He kept all over my parents actually have many people of them with small and He said ‘Maybe and We were times SE',
+      ' We had four times that He did his life .  and that I can give that the day out from the day out that I’m nice and a child will take away two words .  of us and the family and that I’m gone I have no money to go to help the time .  out from her how to school .  of a job well one day and I didn’t have more difficult and that I was the tumor is a few months We are So much and I can be a lot about is So I’m trying of them on our parents are one more people in my husband got a lot that the family and We are trying and the tumor from my kids in a few weeks for you can’t even if We had four years old at an older sister .  and the people in and a lot of us that He kept that the family and the time to school because my kids as a brain before SE',
+      ' I just friends that He said He’d of us on our parents to me an older children .  out the time We can get her own my husband is that the family to the time We were on his brain where to me an early that the time but He said ‘You .  and a brain before that We were times when she was in my kids and a few days ago my kids in a brain before that We have more time and I was So I can do you can make it to school and We learn the doctor but my parents to me .   So I’m trying of us to me to me an older than them .  of his life at them in their dishes of them to the time to go home and that He did love at Memorial but I was So I have more .   We were being a few months So We can get them in a child with a few weeks and We can get So We have many crops of the day because my father worked all day and that He had his brain that my husband and that We can do all day because the family from the time to help study SE',
+      " I was the tumor as an hour and We can get So I’m going that I didn’t have a brain tumor is my father worked on our original meeting that I’m gone We can make sure Every single time I can happen that my own since I didn’t because my mother still have more difficult that We learn that We can make sure Every day in their Mom will make .  out from my kids as they had over little .   He did an immune and a lot about being counted .  for days Every day and He started getting and I have four when the day .  and He did love at first .   but my parents actually of us in the doctor right and We have a child in a job I'm and We have four in their nurse to help SE",
+      ' We had over little talent and the day because the doctor said ‘You that We can give that the doctor but all the time to the doctor to the day .  out before .   I was very hard your father has brain .  for the family tried and He kept of a lot .  but He said ‘You of his entire of the day out from her friends and the family from my kids early and the time to be with Cancer is So many children .  but my mother passed and a very hard SE',
+      ' We were on our first .  of the family from her how much for days off the tumor .  out the time but I can get them on my father .   but my father was very small and the people with the time to school because the doctor you can’t Come .   but it can get this thing ever leave her to help and that I’m still did everything and the family tried .  and I didn’t tell me a very sad and that He had his food SE',
+      ' I can get So much to me a child that We are So I was the tumor as my parents to be brave like to the family .  out of a job is my kids as an old and the tumor is So I didn’t have many wonderful family from nothing I just a child .  for days Every few months So many children but my father has older than them in their Mom inside and that the day out of them .  for the day and We had money but I’m nice but I’m still early and a few .  and He did everything that He had his brain where I didn’t know .  and the doctor said He’d of his life and the day SE',
+      ' and I have a very sad something in the day that I’m scared that the people who had over my own .  out that We were times that my parents would be .  of his money and the family from nothing but He did his own my parents actually and a few already have more time but I just in that my husband .   but I’m gone I can make it was So We can make more time to be a few days and We can happen to school SEPARATOR SEPARATOR of a brain that We were down our parents .   We can give him a child .  for the day and a child with my husband or all his entire life SE',
+      " He did his money to school SEPARATOR SEPARATOR and I didn’t even more difficult for him a job is that I don’t want all day in the time I can happen and a very good human in my parents tell them to the tumor from growing that I can do my kids but it can get her that I was So many children but I’m scared .  out from the doctor but He was in my mother still a very rare one in the family from nothing more things that He started to be able to the family .  but He started getting better person of a job I'm still in that I’m scared and that We have no need and a few already .  but my own things when my own Now that We learn that We had money but my kids .  of the tumor in my kids in that We are always successful and He was the tumor as they had been So We have to go home because she is my own things .  out of a child in that the family who are So I’m nice and He did SE",
+      ' So I have more time I didn’t want all his life that I didn’t tell the time .  out the tumor in a few days of the family who has it was a lot that I’m going to school and He started getting and a few days ago my parents to school today but He did love and We are one day and that I’m nice to school today ’ it is my husband and He was a job in that I didn’t because of a child with the family tried of us and the family and We can do you can get a job in my husband and the doctor said it is a job is a few already have a very hard and the tumor because I was a few already have to me .   I just couldn’t sit I was very rare pediatric of my father that the doctor said it was in the time .  for the family tried to go home but I’m gone I was very rare pediatric that He started working and He started working with my parents are So I’m nice but my mother passed and the family .  and that He said they told us to the day out the day and We had over my mother made it out that I have many children but all my husband right out that the doctor but He had a lot about them in the tumor as We were to be the tumor from my father was in and a child with the doctor but all the tumor because she told that He kept that He started working on your head Every morning that the tumor as an old at their hair .  but it SE',
+      ' We have a very rare .  and that I’m still not that my parents actually have a job well .  out from .  of my kids early but my father has brain that I’m nice but it out .  for the day that my parents to me a very well .  for him to school because she never tell us on his life that We learn These SE',
+      ' He kept of my kids early but my parents actually know why there .  but I’m gone to the time and He kept of a brain that the tumor from nothing but all the doctor right this .  of a job in the people who will try I have a lot that I can give him for days ago my father was a child has .  for the time to help study .  for the time .  out SE',
+      ' So many things out the doctor but my father worked in the tumor .  of us in a brain tumor in the doctor right Now I just in the family from nothing more difficult that the family tried that We had been the people of his food of them that I just a child will get her how much and He was very hard and We have many children of a very good with my own .  for days of the day that my parents actually have many children because they don’t be the time but I’m scared to help with the doctor said it was the tumor in the people have to the time and the family tried that my parents actually and the people with me to school at Memorial of them on my own things when she had money to the tumor .  out of my kids but all day because they were times when my husband or four years .  for a child in a lot and a child that my husband or four times I can give you .  out before the tumor is my father SE',
+      ' and I didn’t tell them .  out from the time to help the time We have many wonderful family tried that I’m going to school at them .  out from the day in the tumor because they don’t like to go for days Every morning that We can do my kids and He kept for Every morning .  and that my parents to be the family tried that I can be a very rare .  and I have many things that my parents to be a job well of my husband or ‘Maybe and He kept and I just an older sister and He did his money but all day that We were to school .  of my parents would be the doctor but my own since that I have many children of his own SE'],
+     [' in day since of education this as well to travel',
+      ' me Ngfg5S Photography At this video to have been and sizes to a musical',
+      " Harvard's most to have a to Harvard Business and her to a place in day",
+      ' in a vital to The Plaza',
+      ' in this video and more about The Plaza while and around and Harvard .  of a place of Public Library of a look of The Year award for a vital of education is to travel in a vital interest and her to The Year of a new study also and Harvard scientists and around',
+      ' me Ngfg5S of a vital and her love',
+      ' in a vital and her dream',
+      ' me to have about The Harvard .   in Jamaica a vital interest to travel of Public of its thriving as well of a musical to look and more .  and sizes',
+      ' a place that is where you work by of The United of Public to The Plaza WinterFest and more than The Year of Public to look Inside to have about The Plaza and her to travel',
+      " Harvard's 29th to The Plaza while of its most",
+      ' a place and her',
+      ' a look and around you this as well to have a look',
+      " Harvard's new dean and The Plaza while and Harvard scientists and her dream and more http www of its first of its first computer .  of our community .  of education .  ",
+      ' me 11KFl1l to a place to The World around you this as The United a to have about climate of education and around The Plaza WinterFest 2017',
+      ' in a musical and sizes',
+      ' me maste6cc8 to Harvard University is not and Harvard Library .  and more . ',
+      ' The World according of its place that The Harvard Library .  and her to The United',
+      ' The Plaza into',
+      ' a vital of education of The World around and more http www of Public Library http of a vital to The United to The flu to look',
+      ' in Jamaica of The Year At this Year At The flu of our',
+      ' me maste6cc8 and around of education',
+      " Harvard's Arnold Arboretum .  and around of The flu and Harvard Library of Public health http www of Public",
+      " Harvard's new study also",
+      ' in Jamaica a new dean',
+      ' in this video of Public to look around you this as some special in this fall discusses .  of a to travel in this as The World around',
+      ' me of its first and around and more ” Professor and her dream to a new exhibit The United and around to a place of education .   a to travel to travel and around to have a place',
+      ' a musical to travel in day since of education is a vital to a to look Inside',
+      " Harvard's 29th to travel of our community of The World .  James case to have been in this fall http www",
+      ' me 11KFl1l . ',
+      ' in a to look of its most'],
+     [' Trump arrives from coming',
+      ' ly was no campaign to be done .  at those that This Earth',
+      ' \n WATCH more http at CPAC',
+      ' \n Moments in Parkland that the U in Parkland',
+      ' ly 2tGFNmR and then they were killed .  Baier that the wake a Michigan a lot',
+      ' http live day means',
+      ' \n on Fox NEWS and other Political opposition research in 2016',
+      ' ly was used to look than Islamic of a campaign to look into that the FBI as I believe that he wanted to give from coming out of This morning',
+      ' Trump tweeted his statement',
+      ' http at the OrlandoShooting . ',
+      ' Trump reacts to help',
+      ' ws from a lot',
+      ' ly from 25 days',
+      ' ly was no other place Early This memo could be used to help the U',
+      ' Trump and other Political',
+      ' http fxn in a President Mike Huckabee a Florida .  Zoo',
+      ' \n \n in 2016 Trump reacts from inside an act from',
+      ' Trump campaign .  Baier http live day comes',
+      ' ws 2nE8LBx a Michigan a Michigan that .  at day there from',
+      ' Trump tweeted his statement',
+      ' \n \n WATCH Donald',
+      ' \n Donald was help a lot from inside Pulse that these',
+      ' ly 2tGFNmR from a Florida .  Zoo of This is a Michigan that This is held for the wake of Orlando nightclub where they in Parkland that This memo because that This Earth a Michigan from 25 from coming in 2016 when',
+      ' \n in Parkland Florida Deputy a campaign to be used a Florida .  ',
+      ' http bit . ',
+      ' ly a Michigan that he could that .   Trump arrives',
+      ' \n WATCH Florida school shooting suspect a Michigan a Florida Deputy that these and other place from inside Pulse a campaign',
+      ' ly that these a Florida reportedly from 25 in Orlando terror',
+      ' ws from 25 from inside Pulse that This Earth to help a campaign to give that he will that .  ',
+      ' http at CPAC was no in modern was help']]
 
 
 
@@ -6432,111 +7243,103 @@ generatedPosts
 In order to classify the generated posts, we first transfer them into a bag of words:
 
 
-```python
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer(analyzer = "word",tokenizer = None,preprocessor = None,stop_words = None, max_features = 400)
-labelsForPosts=[]
-index = 0
-for page in generatedPosts:
-    for post in page:
-        labelsForPosts.append(index)
-    index= index+1
-allGeneratedPosts = generatedPosts[0]+generatedPosts[1]+generatedPosts[2]+generatedPosts[3]+generatedPosts[4]
-generatedPosts_train_data_features = vectorizer.fit_transform(allGeneratedPosts)
-generatedPosts_train_data_features = generatedPosts_train_data_features.toarray()
-```
+    from sklearn.feature_extraction.text import CountVectorizer
+    vectorizer = CountVectorizer(analyzer = "word",tokenizer = None,preprocessor = None,stop_words = None, max_features = 400)
+    labelsForPosts=[]
+    index = 0
+    for page in generatedPosts:
+        for post in page:
+            labelsForPosts.append(index)
+        index= index+1
+    allGeneratedPosts = generatedPosts[0]+generatedPosts[1]+generatedPosts[2]+generatedPosts[3]+generatedPosts[4]
+    generatedPosts_train_data_features = vectorizer.fit_transform(allGeneratedPosts)
+    generatedPosts_train_data_features = generatedPosts_train_data_features.toarray()
 
 Then we use the Random Forest model from step 2, to predict(classify) each generated post:
 
 
-```python
-predictions = forest.predict(generatedPosts_train_data_features)
-```
+    predictions = forest.predict(generatedPosts_train_data_features)
 
 Lest calculate the precision of the classification:
 
 
-```python
-TrumpTruePred= 0
-ObamaTruePred= 0
-HONYTruePred= 0
-HarvardTruePred= 0
-FoxTruePred= 0
-for i in range(5):
-    for j in range(30):
-        if(i==0 and predictions[j] == i ):
-            TrumpTruePred+=1
-        elif(i==1 and predictions[j] == i ):
-            ObamaTruePred+=1
-        elif(i==2 and predictions[j] == i ):
-            HONYTruePred+=1
-        elif(i==3 and predictions[j] == i ):
-            HarvardTruePred+=1
-        elif(i==4 and predictions[j] == i ):
-            FoxTruePred+=1
-print("We got the following precision:")
-print("The classifier predicted " +str(100*TrumpTruePred/30) + "% of Trump posts correctly\n")
-print("The classifier predicted " +str(100*ObamaTruePred/30) + "% of Obama posts correctly\n")
-print("The classifier predicted " +str(100*HONYTruePred/30) + "% of Humans of New York posts correctly\n")
-print("The classifier predicted " +str(100*HarvardTruePred/30) + "% of Harvard posts correctly\n")
-print("The classifier predicted " +str(100*FoxTruePred/30) + "% of Fox News posts correctly\n")
-```
+    TrumpTruePred= 0
+    ObamaTruePred= 0
+    HONYTruePred= 0
+    HarvardTruePred= 0
+    FoxTruePred= 0
+    for i in range(5):
+        for j in range(30):
+            if(i==0 and predictions[j] == i ):
+                TrumpTruePred+=1
+            elif(i==1 and predictions[j] == i ):
+                ObamaTruePred+=1
+            elif(i==2 and predictions[j] == i ):
+                HONYTruePred+=1
+            elif(i==3 and predictions[j] == i ):
+                HarvardTruePred+=1
+            elif(i==4 and predictions[j] == i ):
+                FoxTruePred+=1
+    print("We got the following precision:")
+    print("The classifier predicted " +str(100*TrumpTruePred/30) + "% of Trump posts correctly\n")
+    print("The classifier predicted " +str(100*ObamaTruePred/30) + "% of Obama posts correctly\n")
+    print("The classifier predicted " +str(100*HONYTruePred/30) + "% of Humans of New York posts correctly\n")
+    print("The classifier predicted " +str(100*HarvardTruePred/30) + "% of Harvard posts correctly\n")
+    print("The classifier predicted " +str(100*FoxTruePred/30) + "% of Fox News posts correctly\n")
 
     We got the following precision:
-    The classifier predicted 6.666666666666667% of Trump posts correctly
+    The classifier predicted 46.666666666666664% of Trump posts correctly
     
-    The classifier predicted 3.3333333333333335% of Obama posts correctly
+    The classifier predicted 6.666666666666667% of Obama posts correctly
     
     The classifier predicted 23.333333333333332% of Humans of New York posts correctly
     
-    The classifier predicted 40.0% of Harvard posts correctly
+    The classifier predicted 16.666666666666668% of Harvard posts correctly
     
-    The classifier predicted 26.666666666666668% of Fox News posts correctly
+    The classifier predicted 6.666666666666667% of Fox News posts correctly
     
-
+    
 
 Plotting the confusion matrix:
 
 
-```python
-import itertools
-from sklearn.metrics import confusion_matrix
+    import itertools
+    from sklearn.metrics import confusion_matrix
+    
+    class_names = ['Donald Trump','Barack Obama', 'Humans of New York','Harvard','Fox News']
+    cnfMatrix = confusion_matrix(labelsForPosts, predictions)
+    np.set_printoptions(precision=2)
+    print(cnfMatrix)
+    
+    plt.imshow(cnfMatrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title("Classifier Confusion Matrix")
+    plt.colorbar()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names, rotation=45)
+    plt.yticks(tick_marks, class_names)
+    
+    fmt = 'd'
+    thresh = cnfMatrix.max() / 2.
+    for i, j in itertools.product(range(cnfMatrix.shape[0]), range(cnfMatrix.shape[1])):
+        plt.text(j, i, format(cnfMatrix[i, j], fmt), horizontalalignment="center", color="white" if cnfMatrix[i, j] > thresh else "black")
+        plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+    
+    plt.figure()
+    plt.show()
 
-class_names = ['Donald Trump','Barack Obama', 'Humans of New York','Harvard','Fox News']
-cnfMatrix = confusion_matrix(labelsForPosts, predictions)
-np.set_printoptions(precision=2)
-print(cnfMatrix)
-
-plt.imshow(cnfMatrix, interpolation='nearest', cmap=plt.cm.Blues)
-plt.title("Classifier Confusion Matrix")
-plt.colorbar()
-tick_marks = np.arange(len(class_names))
-plt.xticks(tick_marks, class_names, rotation=45)
-plt.yticks(tick_marks, class_names)
-
-fmt = 'd'
-thresh = cnfMatrix.max() / 2.
-for i, j in itertools.product(range(cnfMatrix.shape[0]), range(cnfMatrix.shape[1])):
-    plt.text(j, i, format(cnfMatrix[i, j], fmt), horizontalalignment="center", color="white" if cnfMatrix[i, j] > thresh else "black")
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-
-plt.figure()
-plt.show()
-```
-
-    [[ 2  1  7 12  8]
-     [ 9  3  7  4  7]
-     [ 0 23  3  0  4]
-     [ 0  0  8 13  9]
-     [ 1 15  6  4  4]]
-
+    [[14  2  7  5  2]
+     [13  3  6  6  2]
+     [ 4  1 12 10  3]
+     [ 1  0  9 18  2]
+     [15  4  5  3  3]]
+    
 
 
 ![png](/Images/output_115_1.png)
 
 
 
-    <matplotlib.figure.Figure at 0xf9b6470>
+    <matplotlib.figure.Figure at 0x127ff978>
 
